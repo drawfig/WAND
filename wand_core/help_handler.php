@@ -4,7 +4,11 @@ class help_handler extends wand_core{
     private $COMMANDS = [
         "help" => "Displays this help message",
         "exit" => "Exits the program",
-        "clear" => "Clears the console"
+        "clear" => "Clears the console",
+        "create-handler" => "Creates a new handler",
+        "init" => "Generates a new server",
+        "gen-env" => "Starts the .env wizard",
+        "start" => "Starts the server in development mode and will automatically reload on changes",
     ];
 
     public function help_display() {

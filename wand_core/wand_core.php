@@ -24,9 +24,24 @@ class wand_core {
                 $load = new make_handler();
                 $load->make_handler();
                 break;
+            case "init":
+                $load = new make_handler();
+                $load->generate_server();
+            case "gen-env":
+                $load = new make_handler();
+                $load->gen_env();
+                break;
+            case "test":
+                $this->test();
+                break;
             default:
                 print("Command {$command} not found\n");
         }
+    }
+
+    private function test() {
+        print("\033[31mTest\n");
+        print("\033[0m");
     }
 
     public function clear_screen() {
@@ -47,7 +62,34 @@ class wand_core {
         print("Goodbye!\n");;
     }
 
+    public function menu($options, $selected, $text) {
+        system('clear');
+
+
+        if($selected > 0) {
+            echo str_repeat(ANSI_CURSOR_UP, count($options));
+        }
+        print($text . ": \n");
+        print($this->LINE_BREAK);
+
+        foreach($options as $index => $option) {
+
+            $option_padded = str_pad($option, 40);
+
+            if($index == $selected) {
+                echo ANSI_INVERSE . $option_padded . ANSI_RESET . "\n";
+            }
+            else {
+                echo $option_padded . "\n";
+            }
+        }
+    }
+
     public function init() {
+        define('ANSI_RESET', "\033[0m");
+        define('ANSI_INVERSE', "\033[7m");
+        define('ANSI_CLEAR_LINE', "\033[2K");
+        define('ANSI_CURSOR_UP', "\033[1A");
         $this->screen_render();
     }
 }
