@@ -145,7 +145,12 @@ class ' . $handler_name . '_handler {
         }
 
         system('stty sane');
-        $this->make_env_file($env_type);
+        if(file_exists("Emberwhisk/src/.env.{$env_type}")) {
+            print("The .env.{$env_type} file already exists.\n");
+        }
+        else {
+            $this->make_env_file($env_type);
+        }
     }
 
     private function make_env_file($env_type) {
@@ -225,7 +230,7 @@ class ' . $handler_name . '_handler {
         }
 
         if($file_content !== "") {
-            $env_file = "Emberwhisk/.env.{$env_type}";
+            $env_file = "Emberwhisk/src/.env.{$env_type}";
             $file_create = fopen($env_file, "w");
             fwrite($file_create, $file_content);
             print("The .env.{$env_type} file has been created.\n");

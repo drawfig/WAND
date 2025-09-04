@@ -31,8 +31,9 @@ class wand_core {
                 $load = new make_handler();
                 $load->gen_env();
                 break;
-            case "test":
-                $this->test();
+            case "start":
+                $load = new start_handler();
+                $load->start_server();
                 break;
             default:
                 print("Command {$command} not found\n");
@@ -41,11 +42,6 @@ class wand_core {
 
     public function gen_random_str($length) {
         return bin2hex(random_bytes($length));
-    }
-
-    private function test() {
-        print("\033[31mTest\n");
-        print("\033[0m");
     }
 
     public function clear_screen() {
