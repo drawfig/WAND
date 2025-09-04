@@ -180,17 +180,23 @@ class ' . $handler_name . '_handler {
             print("Creating the .env.{$env_type} file\n");
             print("To abort type the command 'exit'\n");
             print($this->LINE_BREAK);
-            $value = readline("Enter the value for {$line}: ");
+            $value = readline("Enter the value for {$line} (An empty value will result in the default value being used): ");
 
             if($value == "exit") {
                 $file_content = "";
                 break;
             }
 
+            if($value == "") {
+                $value = $this->default_getters($line, $env_type);
+            }
+
             $file_content .= $line . '="' . $value . '"' . "\n";
         }
         if($file_content == "") {
             print("The .env.{$env_type} file was Aborted.\n");
+            readLine("Press enter to continue.");
+            $this->clear_screen();
             return;
         }
 
@@ -223,9 +229,66 @@ class ' . $handler_name . '_handler {
             $file_create = fopen($env_file, "w");
             fwrite($file_create, $file_content);
             print("The .env.{$env_type} file has been created.\n");
+            readLine("Press enter to continue.");
+            $this->clear_screen();
         }
         else {
             print("The .env.{$env_type} file was Aborted.\n");
+            readLine("Press enter to continue.");
+            $this->clear_screen();
+        }
+    }
+
+    function default_getters($line, $env_type) {
+        switch ($env_type) {
+            case "dev":
+                $environment = "development";
+                break;
+            case "local":
+                $environment = "local";
+                break;
+            case "test":
+                $environment = "testing";
+                break;
+            case "prod":
+                $environment = "production";
+                break;
+            default:
+                $environment = "development";
+        }
+
+        switch($line) {
+            case "APP_NAME":
+                return "Emberwhisk";
+            case "APP_VERSION":
+            case "API_VERSION":
+                return "1.0";
+            case "APP_VERSION_NAME":
+                return "Braixen";
+            case "ADDRESS":
+            case "API_ADDRESS":
+                return "127.0.0.1";
+            case "PORT":
+                return "9502";
+            case "PROTOCOL":
+                return "ws";
+            case "ENVIRONMENT":
+                return $environment;
+            case "API_PROTOCOL":
+                return "http";
+            case "API_AUTH_ADDRESS":
+                return "auth_check";
+            case "WORKER_COUNT":
+                return "1";
+            case "DAEMONIZATION":
+            case "SSL_VERIFY_PEER":
+            case "SSL_ALLOW_SELF_SIGNED":
+                return "false";
+            case "SECRET":
+            case "API_KEY":
+                return $this->gen_random_str(32);
+            default:
+                return "";
         }
     }
 

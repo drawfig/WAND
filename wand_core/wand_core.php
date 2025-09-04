@@ -39,6 +39,10 @@ class wand_core {
         }
     }
 
+    public function gen_random_str($length) {
+        return bin2hex(random_bytes($length));
+    }
+
     private function test() {
         print("\033[31mTest\n");
         print("\033[0m");
