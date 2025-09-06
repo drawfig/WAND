@@ -53,10 +53,15 @@ class start_handler extends wand_core {
         }
         else if($this->npm_check()) {
             system("sudo npm install -g nodemon");
+            print("\033[31mMissing dependency:");
+            print("\033[31mNodemon has been installed please rerun the wand 'start' command\n");
+            print("\033[0m");
         }
         else {
             print("\033[31mMissing dependency:");
-            print("\033[31mNodemon and NPM is not installed.\n");;
+            print("\033[31mNodemon and NPM is not installed.\n");
+            print("\033[31mPlease check how to install NPM on your distro and rerun the wand 'start' command.\n");
+            print("\033[0m");
         }
     }
 

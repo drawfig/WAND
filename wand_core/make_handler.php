@@ -87,7 +87,8 @@ class ' . $handler_name . '_handler {
             }
             else {
                 print("Installing openswoole...\n");
-                system("sudo pecl install openswoole");
+                $configs = 'enable-sockets="no" enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-hook-curl="yes" enable-cares="yes" with-postgres="yes"';
+                system("sudo pecl install -D '" . $configs ."' openswoole");
             }
             print("Emberwhisk installed!\n");
             print("Now just enter the Emberwhisk directory and set up the .env files for the corresponding environment from the example config file or use the 'gen-env' command in WAND to help build them.\n");
