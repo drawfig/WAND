@@ -49,7 +49,7 @@ class start_handler extends wand_core {
     private function run_server($env_type) {
         system("clear");
         if($this->nodemon_check()) {
-            system('nodemon --watch . --ext php --exec "php Emberwhisk/src/start.php ' . $env_type .'"');
+            system('cd Emberwhisk/src && nodemon --watch . --ext php --signal SIGTERM --exec "php run.php ' . $env_type .'"');
         }
         else if($this->npm_check()) {
             system("sudo npm install -g nodemon");
@@ -61,7 +61,7 @@ class start_handler extends wand_core {
     }
 
     private function nodemon_check() {
-        if(system("nodemon --version" == "")) {
+        if(system("nodemon --version") == "") {
             return false;
         }
         else {
