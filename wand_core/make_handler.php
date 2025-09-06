@@ -71,9 +71,10 @@ class ' . $handler_name . '_handler {
             print("Emberwhisk downloaded.\n");
             print("Getting dependencies...\n");
             copy('https://getcomposer.org/installer', 'Emberwhisk/composer-setup.php');
-            system("php Emberwhisk/composer-setup.php");
-            unlink('Emberwhisk/composer-setup.php');
-            system("php Emberwhisk/composer.phar install");
+            system("cd Emberwhisk && php composer-setup.php");;
+            unlink('composer-setup.php');
+            system("php composer.phar install");
+            system("cd ..");
             print("Checking for openswoole...\n");
             if($this->openswoole_check()) {
                 print("Openswoole is already installed.\n");
