@@ -27,6 +27,7 @@ class wand_core {
             case "init":
                 $load = new make_handler();
                 $load->generate_server();
+                break;
             case "gen-env":
                 $load = new make_handler();
                 $load->gen_env();
