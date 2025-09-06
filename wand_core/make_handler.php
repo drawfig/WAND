@@ -80,7 +80,7 @@ class ' . $handler_name . '_handler {
             }
             else {
                 print("Installing openswoole...\n");
-                system("pecl install openswoole");
+                system("sudo pecl install openswoole");
             }
             print("Emberwhisk installed!\n");
             print("Now just enter the Emberwhisk directory and set up the .env files for the corresponding environment from the example config file or use the 'gen-env' command in WAND to help build them.\n");
