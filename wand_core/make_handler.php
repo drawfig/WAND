@@ -61,7 +61,14 @@ class ' . $handler_name . '_handler {
         }
         else if(!$this->pecl_check()) {
             print("\033[31mMissing dependency:");
-            print("\033[31mPECL is not installed.\n");
+            print("\033[31mPECL/PHP-PEAR is not installed.\n");
+            print("\033[31mPlease check how to install PECL/PHP-PEAR on your distro and rerun the wand 'init' command.\n");
+            print("\033[0m");
+        }
+        else if(!$this->php_dev_check()) {
+            print("\033[31mMissing dependency:");
+            print("\033[31mphpize not detected\n");
+            print("\033[31mPlease check how to install php-dev or a similar package on your distro and rerun the wand 'init' command.\n");
             print("\033[0m");
         }
         else {
@@ -92,6 +99,16 @@ class ' . $handler_name . '_handler {
     private function pecl_check() {
         $pecl_check = system("pecl -V");
         if($pecl_check !== "") {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    private function php_dev_check() {
+        $dev_check = system("which phpize");
+        if($dev_check !== "") {
             return true;
         }
         else {
