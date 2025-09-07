@@ -125,7 +125,7 @@ class ' . $handler_name . '_handler {
             }
             $final_route = $output . "/mods-available";
             system('sudo touch ' . $final_route . '/openswoole.ini');
-            system('echo "EOF' . "\n" . 'extension=openswoole' . "\n" . 'EOF" | sudo tee ' . $final_route . '/openswoole.ini');
+            system('echo "; Configuration for Open Swoole' . "\n" . '; priority=30' . "\n" . 'extension=openswoole" | sudo tee ' . $final_route . '/openswoole.ini');
             system("sudo phpenmod -s cli openswoole");
             if($this->openswoole_check()) {
                 print("Openswoole was installed successfully.\n");
