@@ -63,6 +63,10 @@ class wand_core {
         print("Goodbye!\n");;
     }
 
+    public function server_files_check() {
+        return file_exists("Emberwhisk");
+    }
+
     public function menu($options, $selected, $text) {
         system('clear');
 
