@@ -99,7 +99,7 @@ class ' . $handler_name . '_handler {
             }
             else {
                 print("Installing openswoole...\n");
-                $configs = 'enable-sockets="no" enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-hook-curl="yes" enable-cares="yes" with-postgres="yes"';
+                $configs = 'enable-sockets="yes" enable-openssl="yes" enable-http2="yes" enable-mysqlnd="no" enable-hook-curl="no" enable-cares="no" with-postgres="no"';
                 system("sudo pecl install -D '" . $configs ."' openswoole");
                 $this->run_phpenmod();
             }
