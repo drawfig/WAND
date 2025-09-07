@@ -118,6 +118,9 @@ class ' . $handler_name . '_handler {
 
             $output = "";
             foreach($route_array as $item) {
+                if($item == "cli" || $item == "php.ini") {
+                    break;
+                }
                 $output .= "/" . $item;
             }
             $final_route = $output . "/mods_available";
