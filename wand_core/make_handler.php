@@ -172,7 +172,7 @@ class ' . $handler_name . '_handler {
     }
 
     private function phpenmod_check() {
-        $mod_check = system("php -m | grep phpenmod");
+        $mod_check = system("phpenmod");
         if($mod_check == "") {
             return false;
         }
