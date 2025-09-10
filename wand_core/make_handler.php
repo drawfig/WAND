@@ -27,8 +27,10 @@ class make_handler extends wand_core {
             }
         }
         else {
+            print("\033[31m$this->LINE_BREAK\n");
             print("\033[31mServer files missing:");
             print("\033[31mPlease run the wand 'init' command first to install the server.\n");
+            print("\033[31m$this->LINE_BREAK\n");
             print("\033[0m");
         }
     }
@@ -61,8 +63,10 @@ class ' . $handler_name . '_handler {
             }
         }
         else {
+            print("\033[31m$this->LINE_BREAK\n");
             print("\033[31mServer files missing:");
             print("\033[31mPlease run the wand 'init' command first to install the server.\n");
+            print("\033[31m$this->LINE_BREAK\n");
             print("\033[0m");
         }
     }
@@ -72,15 +76,19 @@ class ' . $handler_name . '_handler {
             print("Emberwhisk is already installed.\n");
         }
         else if(!$this->pecl_check()) {
+            print("\033[31m$this->LINE_BREAK\n");
             print("\033[31mMissing dependency:");
             print("\033[31mPECL/PHP-PEAR is not installed.\n");
             print("\033[31mPlease check how to install PECL/PHP-PEAR on your distro and rerun the wand 'init' command.\n");
+            print("\033[31m$this->LINE_BREAK\n");
             print("\033[0m");
         }
         else if(!$this->php_dev_check()) {
+            print("\033[31m$this->LINE_BREAK\n");
             print("\033[31mMissing dependency:");
             print("\033[31mphpize not detected\n");
             print("\033[31mPlease check how to install php-dev or a similar package on your distro and rerun the wand 'init' command.\n");
+            print("\033[31m$this->LINE_BREAK\n");
             print("\033[0m");
         }
         else {
@@ -131,16 +139,20 @@ class ' . $handler_name . '_handler {
                 print("Openswoole was installed successfully.\n");
             }
             else {
+                print("\033[31m$this->LINE_BREAK\n");
                 print("\033[31mSomething went wrong while OpenSwoole was being installed\n");
                 print("\033[31mPlease consider maually installing OpenSwoole using their Documentation: https://openswoole.com/docs/get-started/installation#enable-swoole-extension-in-php\n");
+                print("\033[31m$this->LINE_BREAK\n");
                 print("\033[0m");
             }
         }
         else {
+            print("\033[31m$this->LINE_BREAK\n");
             print("\033[31mSystem doesn't have phpenmod on the system.\n");
             print("\033[31mUnable to add openswoole.so extension automatically please add the extension before trying to run your server!\n");
             print("\033[31m(Should be able to add the extension to your php.ini file which you can find by runnning the command 'php --ini | grep php.ini' in bash.)\n");
             print("\033[31mYou can check the OpenSwoole documentation at: https://openswoole.com/docs/get-started/installation#enable-swoole-extension-in-php for help.\n");
+            print("\033[31m$this->LINE_BREAK\n");
             print("\033[0m");
         }
     }

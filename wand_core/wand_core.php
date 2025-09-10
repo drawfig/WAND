@@ -67,6 +67,17 @@ class wand_core {
         return file_exists("Emberwhisk");
     }
 
+    public function sqlite3_check() {
+        $out = system("php -m | grep sqlite3");
+
+        if($out = "") {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
     public function menu($options, $selected, $text) {
         system('clear');
 
