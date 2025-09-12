@@ -70,7 +70,7 @@ class wand_core {
     public function sqlite3_check() {
         $out = system("php -m | grep sqlite3");
 
-        if($out = "") {
+        if($out == "") {
             return false;
         }
         else {

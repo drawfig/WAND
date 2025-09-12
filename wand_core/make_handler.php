@@ -201,6 +201,7 @@ class ' . $handler_name . '_handler {
             "local",
             "test",
             "prod",
+            "database config"
         ];
 
         $selected = 0;
@@ -234,6 +235,14 @@ class ' . $handler_name . '_handler {
         if(file_exists("Emberwhisk/src/.env.{$env_type}")) {
             print("The .env.{$env_type} file already exists.\n");
         }
+        else if($env_type == "database config") {
+            if(file_exists("Emberwhisk/src/.env.db_config")) {
+                print("The .env.db_config file already exists.\n");
+            }
+            else {
+                $this->create_database_config();
+            }
+        }
         else {
             $this->make_env_file($env_type);
         }
@@ -255,6 +264,7 @@ class ' . $handler_name . '_handler {
             "API_VERSION",
             "WORKER_COUNT",
             "SECRET",
+            "MYSQL_RUN",
         ];
 
         $deploy_lines = [
@@ -264,6 +274,7 @@ class ' . $handler_name . '_handler {
             "SSL_VERIFY_PEER",
             "SSL_ALLOW_SELF_SIGNED",
         ];
+        $db_config_gen = false;
 
         $file_content = "";
         foreach($file_lines as $line) {
@@ -280,6 +291,10 @@ class ' . $handler_name . '_handler {
 
             if($value == "") {
                 $value = $this->default_getters($line, $env_type);
+            }
+
+            if($line == "MYSQL_RUN" && $value == "true") {
+                $db_config_gen = true;
             }
 
             $file_content .= $line . '="' . $value . '"' . "\n";
@@ -315,6 +330,15 @@ class ' . $handler_name . '_handler {
             $file_content .= 'SSL_ALLOW_SELF_SIGNED="false"' . "\n";
         }
 
+        if($db_config_gen) {
+            if(file_exists("Emberwhisk/src/.env.db_config")) {
+                print("The .env.db_config file already exists.\n");
+            }
+            else {
+                $this->create_database_config();
+            }
+        }
+
         if($file_content !== "") {
             $env_file = "Emberwhisk/src/.env.{$env_type}";
             $file_create = fopen($env_file, "w");
@@ -330,7 +354,7 @@ class ' . $handler_name . '_handler {
         }
     }
 
-    function default_getters($line, $env_type) {
+    private function default_getters($line, $env_type) {
         switch ($env_type) {
             case "dev":
                 $environment = "development";
@@ -374,12 +398,67 @@ class ' . $handler_name . '_handler {
             case "DAEMONIZATION":
             case "SSL_VERIFY_PEER":
             case "SSL_ALLOW_SELF_SIGNED":
+            case "MYSQL_RUN":
                 return "false";
             case "SECRET":
             case "API_KEY":
                 return $this->gen_random_str(32);
+            case "DB_HOST":
+                return "localhost";
+            case "DB_PORT":
+                return "3306";
+            case "DB_USERNAME":
+            case "DB_NAME":
+                return "emberwhisk";
+            case "DB_PASSWORD":
+                return "notsecure";
             default:
                 return "";
+        }
+    }
+
+    private function create_database_config() {
+        $file_lines = [
+            "DB_HOST",
+            "DB_PORT",
+            "DB_NAME",
+            "DB_USER",
+            "DB_PASS",
+        ];
+
+        $file_content = "";
+        foreach($file_lines as $line) {
+            system("clear");
+            print("Creating the .env.database config file\n");
+            print("To abort type the command 'exit'\n");
+            print($this->LINE_BREAK);
+            $value = readline("Enter the value for {$line}: ");
+
+            if($value == "exit") {
+                $file_content = "";
+                break;
+            }
+
+            if($value == "") {
+                $value = $this->default_getters($line, "database config");;
+            }
+
+
+            $file_content .= $line . '="' . $value . '"' . "\n";
+
+            if($file_content !== "") {
+                $env_file = "Emberwhisk/src/.env.db_config";
+                $file_create = fopen($env_file, "w");
+                fwrite($file_create, $file_content);
+                print("The .env.db_config file has been created.\n");
+                readLine("Press enter to continue.");
+                $this->clear_screen();
+            }
+            else {
+                print("The .env.db_config file was Aborted.\n");
+                readLine("Press enter to continue.");
+                $this->clear_screen();
+            }
         }
     }
 
