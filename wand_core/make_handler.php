@@ -92,6 +92,15 @@ class ' . $handler_name . '_handler {
             print("\033[0m");
         }
         else {
+            if($this->openswoole_check()) {
+                print("Openswoole is already installed.\n");
+            }
+            else {
+                print("Installing openswoole...\n");
+                $configs = 'enable-sockets="yes" enable-openssl="yes" enable-http2="yes" enable-mysqlnd="no" enable-hook-curl="no" enable-cares="no" with-postgres="no"';
+                system("sudo pecl install -D '" . $configs ."' openswoole");
+                $this->run_phpenmod();
+            }
             print ("Installation of Emberwhisk initialized...\n");
             print("Downloading Emberwhisk...\n");
             system("git clone https://github.com/drawfig/Emberwhisk.git");
@@ -102,15 +111,6 @@ class ' . $handler_name . '_handler {
             unlink('Emberwhisk/composer-setup.php');
             system("cd Emberwhisk && php composer.phar install");
             print("Checking for openswoole...\n");
-            if($this->openswoole_check()) {
-                print("Openswoole is already installed.\n");
-            }
-            else {
-                print("Installing openswoole...\n");
-                $configs = 'enable-sockets="yes" enable-openssl="yes" enable-http2="yes" enable-mysqlnd="no" enable-hook-curl="no" enable-cares="no" with-postgres="no"';
-                system("sudo pecl install -D '" . $configs ."' openswoole");
-                $this->run_phpenmod();
-            }
             print("Emberwhisk installed!\n");
             print("Now just enter the Emberwhisk directory and set up the .env files for the corresponding environment from the example config file or use the 'gen-env' command in WAND to help build them.\n");
             print("Once that is done run the server by either navigating to the Emberwhisk directory and running 'php run.php [environment-var-here]' or using the 'start' command in WAND.\n");
@@ -267,6 +267,13 @@ class ' . $handler_name . '_handler {
             "MYSQL_RUN",
         ];
 
+        $true_false = [
+            "DAEMONIZATION",
+            "SSL_VERIFY_PEER",
+            "SSL_ALLOW_SELF_SIGNED",
+            "MYSQL_RUN"
+        ];
+
         $deploy_lines = [
             "DAEMONIZATION",
             "SSL_CERT",
@@ -282,7 +289,12 @@ class ' . $handler_name . '_handler {
             print("Creating the .env.{$env_type} file\n");
             print("To abort type the command 'exit'\n");
             print($this->LINE_BREAK);
-            $value = readline("Enter the value for {$line} (An empty value will result in the default value being used): ");
+            if(in_array($line, $true_false)) {
+                $value = $this->true_false_display($line);
+            }
+            else {
+                $value = readline("Enter the value for {$line} (An empty value will result in the default value being used): ");
+            }
 
             if($value == "exit") {
                 $file_content = "";
@@ -312,7 +324,12 @@ class ' . $handler_name . '_handler {
                 print("Creating the .env.{$env_type} file\n");
                 print("To abort type the command 'exit'\n");
                 print($this->LINE_BREAK);
-                $value = readline("Enter the value for {$line}: ");
+                if(in_array($line, $true_false)) {
+                    $value = $this->true_false_display($line);
+                }
+                else {
+                    $value = readline("Enter the value for {$line}: ");
+                }
 
                 if($value == "exit") {
                     $file_content = "";
@@ -351,6 +368,39 @@ class ' . $handler_name . '_handler {
             print("The .env.{$env_type} file was Aborted.\n");
             readLine("Press enter to continue.");
             $this->clear_screen();
+        }
+    }
+
+    private function true_false_display($line) {
+        $options = [
+            "false",
+            "true",
+            "exit"
+        ];
+
+        $selected = 0;
+        system('stty -echo -icanon');
+        $this->menu($options, $selected, "Select the config value for {$line}");
+
+        while (true) {
+            $key = fread(STDIN, 1);
+            if ($key === "\033") {
+                fread(STDIN, 1);
+                $key_sequence = fread(STDIN, 1);
+                switch ($key_sequence) {
+                    case "A":
+                        $selected = max(0, $selected - 1);
+                        break;
+                    case "B":
+                        $selected = min(count($options) - 1, $selected + 1);
+                        break;
+                }
+                $this->menu($options, $selected, "Select the config value for {$line}");
+            } else if ($key == "\n") {
+                system('stty sane');
+
+                return $options[$selected];
+            }
         }
     }
 
