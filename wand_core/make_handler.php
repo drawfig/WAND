@@ -584,22 +584,25 @@ class ' . $handler_name . '_handler {
             print($this->LINE_BREAK);
             $value = readline("Enter the value for {$line}: ");
 
-            if($value == "exit") {
+            if ($value == "exit") {
                 $file_content = "";
                 break;
             }
 
-            if($value == "") {
+            if ($value == "") {
                 $value = $this->default_getters($line, "database config");;
             }
 
 
             $file_content .= $line . '="' . $value . '"' . "\n";
+        }
 
             if($file_content !== "") {
                 $env_file = "Emberwhisk/src/.env.db_config";
                 $file_create = fopen($env_file, "w");
                 fwrite($file_create, $file_content);
+                print("The .env.db_config file has been created.\n");
+                readLine("Press enter to continue.");
                 $this->clear_screen();
             }
             else {
@@ -607,7 +610,6 @@ class ' . $handler_name . '_handler {
                 readLine("Press enter to continue.");
                 $this->clear_screen();
             }
-        }
     }
 
 
