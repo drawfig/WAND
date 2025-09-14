@@ -2,6 +2,39 @@
 
 class make_handler extends wand_core {
 
+    public function make_agent() {
+        if($this->server_files_check()) {
+            $run = true;
+            print($this->LINE_BREAK);
+            print("Generate a new agent for the server.\n");
+            print("Type 'cancel' to exit.\n");;
+            while ($run) {
+                $agent_name = readline("Agent Name: ");
+                if (strtolower($agent_name) == "cancel") {
+                    $this->clear_screen();
+                    break;
+                }
+
+                if ($agent_name !== "") {
+                    $status_chk = $this->generate_agent($agent_name);
+                }
+                else {
+                    print("Agent name cannot be empty.\n");
+                }
+                if ($status_chk) {
+                    $run = false;
+                }
+            }
+        }
+        else {
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31mServer files missing:");
+            print("\033[31mPlease run the wand 'init' command first to install the server.\n");
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[0m");
+        }
+    }
+
     public function make_handler() {
         if($this->server_files_check()) {
             $run = true;
@@ -35,6 +68,50 @@ class make_handler extends wand_core {
         }
     }
 
+    private function generate_agent($agent_name) {
+        if($this->server_files_check()) {
+            if (file_exists("Emberwhisk/src/Agents/{$agent_name}_agent.php")) {
+                print("Agent already exists.\n");
+                print("Please choose a different name.\n");
+                return false;
+            } else {
+                print("Generating agent...\n");
+                $file_content = '<?php
+namespace Handlers;
+spl_autoload_register(function ($class_name) {
+    if(file_exists(__DIR__ . "/Utils/" . str_replace("Utils\\", "", $class_name) . ".php")) {
+        require_once (__DIR__ . "/Utils/" . str_replace("Utils\\", "", $class_name) . ".php");
+    }
+});
+
+spl_autoload_register(function ($class_name) {
+    if(file_exists(__DIR__ . "/Agents/" . str_replace("Agents\\", "", $class_name) . ".php")) {
+        require_once (__DIR__ . "/Agents/" . str_replace("Agents\\", "", $class_name) . ".php");
+    }
+});
+
+spl_autoload_register(function ($class_name) {
+    include ($class_name . ".php");
+});
+
+class ' . $agent_name . '_agent {
+
+}
+';
+                $file_create = fopen("Emberwhisk/src/Agents/{$agent_name}_agent.php", "w");
+                fwrite($file_create, $file_content);
+                return true;
+            }
+        }
+        else {
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31mServer files missing:");
+            print("\033[31mPlease run the wand 'init' command first to install the server.\n");
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[0m");
+        }
+    }
+
     private function generate_handler($handler_name) {
         if($this->server_files_check()) {
             if (file_exists("Emberwhisk/src/Handlers/{$handler_name}_handler.php")) {
@@ -44,9 +121,16 @@ class make_handler extends wand_core {
             } else {
                 print("Generating handler...\n");
                 $file_content = '<?php
+namespace Handlers;
 spl_autoload_register(function ($class_name) {
     if(file_exists(__DIR__ . "/Utils/" . str_replace("Utils\\\", "", $class_name) . ".php")) {
         require_once (__DIR__ . "/Utils/" . str_replace("Utils\\\", "", $class_name) . ".php");
+    }
+});
+
+spl_autoload_register(function ($class_name) {
+    if(file_exists(__DIR__ . "/Agents/" . str_replace("Agents\\", "", $class_name) . ".php")) {
+        require_once (__DIR__ . "/Agents/" . str_replace("Agents\\", "", $class_name) . ".php");
     }
 });
 
@@ -55,6 +139,22 @@ spl_autoload_register(function ($class_name) {
 });
 
 class ' . $handler_name . '_handler {
+
+    private $SECRET;
+    private $DATA;
+    private $FD;
+    private $SERVER;
+    private $DB;
+    private $RUN_TYPE;
+
+    public function __construct($secret, $data, $fd, $server, $db, $run_type) {
+        $this->SECRET = $secret;
+        $this->DATA = $data;
+        $this->FD = $fd;
+        $this->SERVER = $server;
+        $this->DB = $db;
+        $this->RUN_TYPE = $run_type;
+    }
 
 }';
                 $file_create = fopen("Emberwhisk/src/Handlers/{$handler_name}_handler.php", "w");

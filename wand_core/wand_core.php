@@ -24,6 +24,10 @@ class wand_core {
                 $load = new make_handler();
                 $load->make_handler();
                 break;
+            case "create-agent":
+                $load = new make_handler();
+                $load->make_agent();
+                break;
             case "init":
                 $load = new make_handler();
                 $load->generate_server();
