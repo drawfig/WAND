@@ -600,8 +600,6 @@ class ' . $handler_name . '_handler {
                 $env_file = "Emberwhisk/src/.env.db_config";
                 $file_create = fopen($env_file, "w");
                 fwrite($file_create, $file_content);
-                print("The .env.db_config file has been created.\n");
-                readLine("Press enter to continue.");
                 $this->clear_screen();
             }
             else {
