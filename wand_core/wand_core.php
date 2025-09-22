@@ -9,6 +9,7 @@ class wand_core {
     public $LINE_BREAK = "=======================================================================\n";
 
     private function command_handler($command) {
+
         switch (strtolower($command)) {
             case "exit":
                 $this->RUN = false;
@@ -58,12 +59,18 @@ class wand_core {
     }
 
     private function screen_render() {
+        $history_file = ".wand_history";
+        if (file_exists($history_file)) {
+            readline_read_history($history_file);
+        }
         $this->clear_screen();
 
         while($this->RUN) {
             $command = readline("> ");
-            $this->command_handler($command);
+            readline_add_history($command);
+            $this->command_handler($command, $history_file);
         }
+        readline_write_history($history_file);
         print("Goodbye!\n");;
     }
 

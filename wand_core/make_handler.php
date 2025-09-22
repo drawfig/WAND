@@ -204,6 +204,7 @@ class ' . $handler_name . '_handler {
             print ("Installation of Emberwhisk initialized...\n");
             print("Downloading Emberwhisk...\n");
             system("git clone https://github.com/drawfig/Emberwhisk.git");
+            system("rm -rf Emberwhisk/.git");
             print("Emberwhisk downloaded.\n");
             print("Getting dependencies...\n");
             copy('https://getcomposer.org/installer', 'Emberwhisk/composer-setup.php');
