@@ -1,3 +1,6 @@
+# WAND
+
+
 ## About WAND
 
 WAND is the official companion development toolkit for the Emberwhisk framework. It's designed to streamline your workflow by providing a simple and consistent way to install, configure, and manage your Emberwhisk projects.
