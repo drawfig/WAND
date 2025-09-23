@@ -19,6 +19,8 @@ Key features of WAND include:
 
 WAND is the recommended way to get started with Emberwhisk and ensure a smooth, efficient, and enjoyable development experience.
 
+Join us on our [Discord server.](https://discord.gg/gtwuf2A4Hq)
+
 ### How to Install WAND
 
 **Important Note:** WAND is currently designed to be compatible only with **Linux**. If you are on another operating system, you will need to manually install and manage the [Emberwhisk Framework](https://github.com/drawfig/Emberwhisk/tree/master) by following its own installation instructions.
@@ -71,7 +73,7 @@ Once WAND is running, you can use its commands to set up and manage your Emberwh
 WAND & Emberwhisk are open-source projects, and we welcome contributions from the community! If you'd like to get involved, here are a few ways you can help:
 - **Report Bugs:** If you find a bug or an issue, please open an issue on the GitHub repository.
 - **Submit Code:** Have an idea for a new feature or a bug fix? Feel free to fork the repository and submit a pull request.
-- **Get in Touch:** For general questions, feature discussions, or to just chat about the project, you can contact me on Discord at `drawfig`.
+- **Get in Touch:** For general questions, feature discussions, or to just chat about the project, you can contact me on Discord at `drawfig` or by joining [our server.](https://discord.gg/gtwuf2A4Hq).
 
 Your contributions are greatly appreciated and help make Emberwhisk better for everyone.
 
