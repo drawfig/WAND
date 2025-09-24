@@ -17,6 +17,9 @@ class make_handler extends wand_core {
 
                 if ($agent_name !== "") {
                     $status_chk = $this->generate_agent($agent_name);
+                    print($this->LINE_BREAK);
+                    print("Agent generated successfully.\n");
+                    print($this->LINE_BREAK);
                 }
                 else {
                     print("Agent name cannot be empty.\n");
@@ -51,6 +54,9 @@ class make_handler extends wand_core {
 
                 if ($handler_name !== "") {
                     $status_chk = $this->generate_handler($handler_name);
+                    print($this->LINE_BREAK);
+                    print("Handler generated successfully.\n");
+                    print($this->LINE_BREAK);
                 } else {
                     print("Handler name cannot be empty.\n");
                 }
