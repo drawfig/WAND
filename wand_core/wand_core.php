@@ -54,6 +54,10 @@ class wand_core {
                 $load = new start_handler();
                 $load->start_server();
                 break;
+            case "connect-test":
+                $load = new connect_test();
+                $load->run();
+                break;
             default:
                 print("Command {$command} not found\n");
         }
