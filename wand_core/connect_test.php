@@ -49,20 +49,41 @@ class connect_test extends wand_core {
             $is_upgrade = $client->upgrade('/');
 
             if ($is_upgrade) {
-                $message = json_encode(["message_type" => "bounce", "test_data" => bin2hex(random_bytes(32))]);
+                $test_data = bin2hex(random_bytes(32));
+                $message = json_encode(["message_type" => "bounce", "test_data" => $test_data]);
                 $client->push($message);
 
                 $response = $client->recv(5);
 
                 if ($response) {
-                    var_dump($response);
+                    $response_data = json_decode($response->data, true);
+                    if ($response_data['message_type'] == "bounce" && $response_data['test_data'] == $test_data) {
+                        print("\033[32m" . $this->LINE_BREAK);
+                        print("\033[32mConnection Successful\n");
+                        print("\033[32m" . $this->LINE_BREAK);
+                        print("\033[0m");
+                    }
+                    else {
+                        print("\033[31m" . $this->LINE_BREAK);
+                        print("\033[31mBad Response From Server\n");
+                        print("\033[31m" . $this->LINE_BREAK);
+                        print("\033[0m");
+                    }
                 }
                 else {
-                    print("No response\n");
+                    print("\033[31m" . $this->LINE_BREAK);
+                    print("\033[31mServer is connected but\n");
+                    print("\033[31mThere was No Response From the Server\n");
+                    print("\033[31mMake sure that 'bounce' is in the route.\n");
+                    print("\033[31m" . $this->LINE_BREAK);
+                    print("\033[0m");
                 }
             }
             else {
-                print("Failed to connect to server\n");
+                print("\033[31m" . $this->LINE_BREAK);
+                print("\033[31mFailed to connect to server\n");
+                print("\033[31m" . $this->LINE_BREAK);
+                print("\033[0m");
             }
         });
     }
