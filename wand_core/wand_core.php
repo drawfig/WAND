@@ -6,6 +6,15 @@ spl_autoload_register(function ($class_name) {
 class wand_core {
     private $RUN = true;
 
+    public $logo = " _    _  ___   _   _______ 
+| |  | |/ _ \ | \ | |  _  \
+| |  | / /_\ \|  \| | | | |
+| |/\| |  _  || . ` | | | |
+\  /\  / | | || |\  | |/ / 
+ \/  \/\_| |_/\_| \_/___/  
+                           
+                           \n";
+
     public $LINE_BREAK = "=======================================================================\n";
 
     private function command_handler($command) {
@@ -17,6 +26,10 @@ class wand_core {
             case "help":
                 $load = new help_handler();
                 $load->help_display();
+                break;
+            case "version":
+                $load = new help_handler();
+                $load->version_display();
                 break;
             case "clear":
                 $this->clear_screen();
@@ -41,6 +54,10 @@ class wand_core {
                 $load = new start_handler();
                 $load->start_server();
                 break;
+            case "connect-test":
+                $load = new connect_test();
+                $load->run();
+                break;
             default:
                 print("Command {$command} not found\n");
         }
@@ -52,6 +69,7 @@ class wand_core {
 
     public function clear_screen() {
         system("clear");
+        print($this->logo);
         print("Welcome to WAND\n");
         print("Type 'help' to get started\n");
         print("Type 'exit' to exit\n");

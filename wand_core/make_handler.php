@@ -333,11 +333,23 @@ class ' . $handler_name . '_handler {
 
         system('stty sane');
         if(file_exists("Emberwhisk/src/.env.{$env_type}")) {
-            print("The .env.{$env_type} file already exists.\n");
+            $rewrite = $this->yes_no_display("The .env.{$env_type} file already exists.\nDo you want to rewrite the file?");
+            if($rewrite) {
+                $this->make_env_file($env_type);
+            }
+            else {
+                $this->clear_screen();
+            }
         }
         else if($env_type == "database config") {
             if(file_exists("Emberwhisk/src/.env.db_config")) {
-                print("The .env.db_config file already exists.\n");
+                $rewrite = $this->yes_no_display("The .env.db_config file already exists.\nDo you want to rewrite the file?");
+                if($rewrite) {
+                    $this->create_database_config();
+                }
+                else {
+                    $this->clear_screen();
+                }
             }
             else {
                 $this->create_database_config();
@@ -345,6 +357,43 @@ class ' . $handler_name . '_handler {
         }
         else {
             $this->make_env_file($env_type);
+        }
+    }
+
+    private function yes_no_display($text) {
+        $options = [
+            "No",
+            "Yes"
+        ];
+
+        $outOpts = [
+            false,
+            true
+        ];
+
+        $selected = 0;
+        system('stty -echo -icanon');
+        $this->menu($options, $selected, $text);
+
+        while (true) {
+            $key = fread(STDIN, 1);
+            if ($key === "\033") {
+                fread(STDIN, 1);
+                $key_sequence = fread(STDIN, 1);
+                switch ($key_sequence) {
+                    case "A":
+                        $selected = max(0, $selected - 1);
+                        break;
+                    case "B":
+                        $selected = min(count($options) - 1, $selected + 1);
+                        break;
+                }
+                $this->menu($options, $selected, $text);
+            } else if ($key == "\n") {
+                system('stty sane');
+
+                return $outOpts[$selected];
+            }
         }
     }
 
@@ -449,7 +498,13 @@ class ' . $handler_name . '_handler {
 
         if($db_config_gen) {
             if(file_exists("Emberwhisk/src/.env.db_config")) {
-                print("The .env.db_config file already exists.\n");
+                $rewrite = $this->yes_no_display("The .env.db_config file already exists.\nDo you want to rewrite the file?");
+                if($rewrite) {
+                    $this->create_database_config();
+                }
+                else {
+                    $this->clear_screen();
+                }
             }
             else {
                 $this->create_database_config();
