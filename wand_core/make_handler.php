@@ -257,43 +257,7 @@ class ' . $handler_name . '_handler {
         }
     }
 
-    private function pecl_check() {
-        $pecl_check = system("pecl -V");
-        if($pecl_check !== "") {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
 
-    private function php_dev_check() {
-        $dev_check = system("which phpize");
-        if($dev_check !== "") {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    private function openswoole_check() {
-        $osw_check = system("php -m | grep openswoole");
-        if($osw_check == "openswoole") {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    private function phpenmod_check() {
-        $mod_check = system("phpenmod");
-        if($mod_check == "") {
-            return false;
-        }
-        return true;
-    }
 
     public function gen_env() {
         $options = [
