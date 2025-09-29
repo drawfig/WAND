@@ -130,6 +130,44 @@ class wand_core {
         }
     }
 
+    public function pecl_check() {
+        $pecl_check = system("pecl -V");
+        if($pecl_check !== "") {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public function php_dev_check() {
+        $dev_check = system("which phpize");
+        if($dev_check !== "") {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public function openswoole_check() {
+        $osw_check = system("php -m | grep openswoole");
+        if($osw_check == "openswoole") {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public function phpenmod_check() {
+        $mod_check = system("phpenmod");
+        if($mod_check == "") {
+            return false;
+        }
+        return true;
+    }
+
     public function init() {
         define('ANSI_RESET', "\033[0m");
         define('ANSI_INVERSE', "\033[7m");

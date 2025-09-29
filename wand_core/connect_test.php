@@ -9,33 +9,60 @@ class connect_test extends wand_core {
 
 
     public function run() {
-        $vars = [
-            "Address",
-            "Port",
-        ];
-        $output = [];
+        $openswoole_status = $this->openswoole_check();
 
-        foreach ($vars as $var) {
-            system("clear");
-            print($this->LINE_BREAK);
-            print("Enter the value of {$var}\n");
-            print("Enter the 'abort' to cancel\n");
-            print($this->LINE_BREAK);
-            $val = readline("> ");
-            if (strtolower($val) == "abort") {
-                $output = [];
-                break;
-            }
-            else {
-                $output[$var] = $val;
-            }
-        }
+        if($openswoole_status) {
+            $vars = [
+                "Address",
+                "Port",
+            ];
+            $output = [];
 
-        if (sizeof($output) > 0) {
-            $this->test($output['Address'], $output['Port']);
+            foreach ($vars as $var) {
+                system("clear");
+                print($this->LINE_BREAK);
+                print("Enter the value of {$var}\n");
+                print("Enter the 'abort' to cancel\n");
+                print($this->LINE_BREAK);
+                $val = readline("> ");
+                if (strtolower($val) == "abort") {
+                    $output = [];
+                    break;
+                } else {
+                    $output[$var] = $val;
+                }
+            }
+
+            if (sizeof($output) > 0) {
+                $this->test($output['Address'], $output['Port']);
+            } else {
+                $this->clear_screen();
+            }
         }
         else {
-            $this->clear_screen();
+            $pecl = $this->pecl_check();
+            $php_dev = $this->php_dev_check();
+            if($pecl && $php_dev) {
+                print("Installing openswoole...\n");
+                $configs = 'enable-sockets="yes" enable-openssl="yes" enable-http2="yes" enable-mysqlnd="no" enable-hook-curl="no" enable-cares="no" with-postgres="no"';
+                system("sudo pecl install -D '" . $configs ."' openswoole");
+                $this->run_phpenmod();
+                print($this->LINE_BREAK);
+                print("Once OpenSwoole is installed you can rerun the test command.");
+                print($this->LINE_BREAK);
+            }
+            if(!$pecl) {
+                print("\033[31m$this->LINE_BREAK\n");
+                print("\033[31mYou are missing the PECL/PHP-PEAR package from your system please install it and retry the command.\n");
+                print("\033[31m$this->LINE_BREAK\n");
+                print("\033[0m");
+            }
+            if(!$php_dev) {
+                print("\033[31m$this->LINE_BREAK\n");
+                print("\033[31mYou are missing the PHP-Dev or equivalent package from your system please install it and retry the command.\n");
+                print("\033[31m$this->LINE_BREAK\n");
+                print("\033[0m");
+            }
         }
     }
     private function test($address, $port) {
@@ -86,5 +113,44 @@ class connect_test extends wand_core {
                 print("\033[0m");
             }
         });
+    }
+
+    private function run_phpenmod() {
+        if($this->phpenmod_check()) {
+            $raw_routing = system("php --ini | grep php.ini");
+            $route_array = explode("/", $raw_routing);
+            array_shift($route_array);
+
+            $output = "";
+            foreach($route_array as $item) {
+                if($item == "cli" || $item == "php.ini") {
+                    break;
+                }
+                $output .= "/" . $item;
+            }
+            $final_route = $output . "/mods-available";
+            system('sudo touch ' . $final_route . '/openswoole.ini');
+            system('echo "; Configuration for Open Swoole' . "\n" . '; priority=30' . "\n" . 'extension=openswoole" | sudo tee ' . $final_route . '/openswoole.ini');
+            system("sudo phpenmod -s cli openswoole");
+            if($this->openswoole_check()) {
+                print("Openswoole was installed successfully.\n");
+            }
+            else {
+                print("\033[31m$this->LINE_BREAK\n");
+                print("\033[31mSomething went wrong while OpenSwoole was being installed\n");
+                print("\033[31mPlease consider maually installing OpenSwoole using their Documentation: https://openswoole.com/docs/get-started/installation#enable-swoole-extension-in-php\n");
+                print("\033[31m$this->LINE_BREAK\n");
+                print("\033[0m");
+            }
+        }
+        else {
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31mSystem doesn't have phpenmod on the system.\n");
+            print("\033[31mUnable to add openswoole.so extension automatically please add the extension before trying to run your server!\n");
+            print("\033[31m(Should be able to add the extension to your php.ini file which you can find by runnning the command 'php --ini | grep php.ini' in bash.)\n");
+            print("\033[31mYou can check the OpenSwoole documentation at: https://openswoole.com/docs/get-started/installation#enable-swoole-extension-in-php for help.\n");
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[0m");
+        }
     }
 }
