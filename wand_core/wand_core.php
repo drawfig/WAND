@@ -6,6 +6,8 @@ spl_autoload_register(function ($class_name) {
 class wand_core {
     private $RUN = true;
 
+    public $ROUTES;
+
     public $logo = " _    _  ___   _   _______ 
 | |  | |/ _ \ | \ | |  _  \
 | |  | / /_\ \|  \| | | | |
@@ -57,6 +59,24 @@ class wand_core {
             case "connect-test":
                 $load = new connect_test();
                 $load->run();
+                break;
+            case "show-routes":
+                $load = new management_handler();
+                $load->show_routes($this->ROUTES);
+                break;
+            case "add-route":
+                $load = new management_handler();
+                $output = $load->create_route($this->ROUTES);
+                if($output) {
+                    $this->ROUTES = $output;
+                }
+                break;
+            case "rmv-route":
+                $load = new management_handler();
+                $output = $load->delete_route($this->ROUTES);
+                if($output) {
+                    $this->ROUTES = $output;
+                }
                 break;
             default:
                 print("Command {$command} not found\n");
@@ -168,11 +188,37 @@ class wand_core {
         return true;
     }
 
+    public function bool_to_str($bool) {
+        if($bool) {
+            return "true";
+        }
+        else {
+            return "false";
+        }
+    }
+
+    public function load_routes() {
+        if($this->server_files_check()) {
+            include_once("Emberwhisk/src/routes/Request_Routes.php");
+            $request_routes = new Request_Routes();
+            $this->ROUTES = $request_routes->REQUEST_ROUTES;
+        }
+        else {
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31mServer files missing:");
+            print("\033[31mPlease run the wand 'init' command first to install the server.\n");
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[0m");
+            return false;
+        }
+    }
+
     public function init() {
         define('ANSI_RESET', "\033[0m");
         define('ANSI_INVERSE', "\033[7m");
         define('ANSI_CLEAR_LINE', "\033[2K");
         define('ANSI_CURSOR_UP', "\033[1A");
+        $this->load_routes();
         $this->screen_render();
     }
 }

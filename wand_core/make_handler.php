@@ -212,6 +212,7 @@ class ' . $handler_name . '_handler {
             system("cd Emberwhisk && php composer.phar install");
             print("Checking for openswoole...\n");
             print("Emberwhisk installed!\n");
+            $this->load_routes();
             print("Now just enter the Emberwhisk directory and set up the .env files for the corresponding environment from the example config file or use the 'gen-env' command in WAND to help build them.\n");
             print("Once that is done run the server by either navigating to the Emberwhisk directory and running 'php run.php [environment-var-here]' or using the 'start' command in WAND.\n");
             print("Note: the WAND 'start' command is recommended for development as it will automatically restart the server when changes are made.\n");;
