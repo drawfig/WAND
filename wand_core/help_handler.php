@@ -14,7 +14,8 @@ class help_handler extends wand_core{
         "init" => "Generates a new server",
         "gen-env" => "Starts the .env wizard",
         "start" => "Starts the server in development mode and will automatically reload on changes",
-        "connect-test" => "Runs a test that checks the server can be connected to and that the routes work. (Note: If the default 'bounce' route in the 'default_handler' has been removed this test will fail.)"
+        "connect-test" => "Runs a test that checks the server can be connected to and that the routes work. (Note: If the default 'bounce' route in the 'default_handler' has been removed this test will fail.)",
+        "run-logging" => "Displays the server logs in the console and will automatically reload on changes",
     ];
 
     private $VERSIONS = [

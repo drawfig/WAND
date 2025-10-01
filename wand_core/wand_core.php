@@ -78,6 +78,10 @@ class wand_core {
                     $this->ROUTES = $output;
                 }
                 break;
+            case "run-logging":
+                $load = new log_handler();
+                $load->display_logs();
+                break;
             default:
                 print("Command {$command} not found\n");
         }
@@ -195,6 +199,117 @@ class wand_core {
         else {
             return "false";
         }
+    }
+
+    public function make_table($title_row, $table_rows) {
+        $col_length = [];
+        foreach($title_row as $title) {
+            $col_length[] = strlen($title);
+        }
+
+        foreach($table_rows as $row) {
+            $pos = 0;
+            foreach($row as $col) {
+                if($col_length[$pos] < strlen($col)) {
+                    $col_length[$pos] = strlen($col);
+                }
+                $pos++;
+            }
+        }
+
+        $pos = 0;
+        foreach ($col_length as $length) {
+            if($length % 2 == 1) {
+                $col_length[$pos] = $length++;
+            }
+            $pos++;
+        }
+
+
+        print($this->title_row_formating($col_length, $title_row));
+        foreach($table_rows as $row) {
+            print($this->table_row_formating($col_length, $row));
+            print($this->gen_table_break($col_length));
+        }
+
+    }
+
+    public function column_spacing($col_length, $text) {
+        $text_length = strlen($text);
+
+        if($text_length == $col_length) {
+            return $text;
+        }
+
+        $diff = $col_length - $text_length;
+
+        $back_space_count = floor($diff / 2);
+        $front_space_count = $diff - $back_space_count;
+
+        for($i = 0; $i < $front_space_count; $i++) {
+            $text = " " . $text;
+        }
+        for($i = 0; $i < $back_space_count; $i++) {
+            $text = $text . " ";
+        }
+
+        return $text;
+    }
+
+    public function table_row_formating($sizes, $row) {
+        $pos = 0;
+        $line_out = "|   ";
+        foreach($row as $col) {
+            $length = $sizes[$pos];
+            $line_out .= $this->column_spacing($length, $this->column_processing($col));
+            if($pos < sizeof($row) - 1) {
+                $line_out .= "   |   ";
+            }
+            $pos++;
+        }
+        return $line_out . "   |\n";
+    }
+
+    public function column_processing($col) {
+        if(is_bool($col)) {
+            if($col) {
+                return "true";
+            }
+            else {
+                return "false";
+            }
+        }
+
+        return $col;
+
+    }
+
+    public function gen_table_break($col_sizes ) {
+        $line_out = "+---";
+        $pos = 0;
+        foreach($col_sizes as $size) {
+            $line_out .= str_repeat("-", $size);
+            if($pos < sizeof($col_sizes) - 1) {
+                $line_out .= "---+---";
+            }
+            $pos++;
+        }
+        $line_out .= "---+\n";
+        return $line_out;
+    }
+
+    public function title_row_formating($sizes, $title_row) {
+        $pos = 0;
+        $line_out = "";
+        foreach($title_row as $title) {
+            $length = $sizes[$pos];
+            $line_out .= $this->column_spacing($length, $title);
+            if($pos < sizeof($title_row) - 1) {
+                $line_out .= "   |   ";
+            }
+            $pos++;
+        }
+        return ANSI_INVERSE . "    " . $line_out . "    " . ANSI_RESET . "\n";
     }
 
     public function load_routes() {
