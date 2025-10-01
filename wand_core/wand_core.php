@@ -80,7 +80,7 @@ class wand_core {
                 break;
             case "run-logging":
                 $load = new log_handler();
-                $load->display_logs();
+                $load->run_logging();
                 break;
             default:
                 print("Command {$command} not found\n");
