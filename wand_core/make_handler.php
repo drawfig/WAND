@@ -376,6 +376,8 @@ class ' . $handler_name . '_handler {
             "API_PROTOCOL",
             "API_AUTH_ADDRESS",
             "API_VERSION",
+            "TIME_BUFFER",
+            "RATE_LIMIT",
             "WORKER_COUNT",
             "SECRET",
             "MYSQL_RUN",
@@ -582,6 +584,10 @@ class ' . $handler_name . '_handler {
                 return "emberwhisk";
             case "DB_PASSWORD":
                 return "notsecure";
+            case "TIME_BUFFER":
+                return "1000";
+            case "RATE_LIMIT":
+                return "60";
             default:
                 return "";
         }
