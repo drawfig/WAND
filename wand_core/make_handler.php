@@ -7,7 +7,8 @@ class make_handler extends wand_core {
             $run = true;
             print($this->LINE_BREAK);
             print("Generate a new agent for the server.\n");
-            print("Type 'cancel' to exit.\n");;
+            print("Type 'cancel' to exit.\n");
+            print($this->LINE_BREAK);
             while ($run) {
                 $agent_name = readline("Agent Name: ");
                 if (strtolower($agent_name) == "cancel") {

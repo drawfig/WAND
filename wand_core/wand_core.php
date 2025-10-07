@@ -7,6 +7,12 @@ class wand_core {
     private $RUN = true;
 
     public $ROUTES;
+    public $MIDDILEWARE_ROUTE_LOCAL_GROUPS;
+    public $MIDDILEWARE_ROUTE_REGION;
+    public $MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES;
+    public $GLOBAL_MIDDLEWARE;
+    public $REGIONAL_MIDDLEWARE;
+    public $LOCAL_GROUP_MIDDLEWARE;
 
     public $logo = " _    _  ___   _   _______ 
 | |  | |/ _ \ | \ | |  _  \
@@ -36,11 +42,11 @@ class wand_core {
             case "clear":
                 $this->clear_screen();
                 break;
-            case "create-handler":
+            case "add-handler":
                 $load = new make_handler();
                 $load->make_handler();
                 break;
-            case "create-agent":
+            case "add-agent":
                 $load = new make_handler();
                 $load->make_agent();
                 break;
@@ -77,6 +83,26 @@ class wand_core {
                 if($output) {
                     $this->ROUTES = $output;
                 }
+                break;
+            case "show-middleware":
+                $load = new middleware_handler();
+                $load->show_middleware();
+                break;
+            case "add-middleware":
+                $load = new middleware_handler();
+                $load->create_middleware();
+                break;
+            case "add-middleware-group":
+                $load = new middleware_handler();
+                $load->create_middleware_group($this->MIDDILEWARE_ROUTE_LOCAL_GROUPS, $this->LOCAL_GROUP_MIDDLEWARE, $this->MIDDILEWARE_ROUTE_REGION, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE, $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES);
+                break;
+            case "add-middleware-region":
+                $load = new middleware_handler();
+                $load->create_middleware_region($this->MIDDILEWARE_ROUTE_LOCAL_GROUPS, $this->LOCAL_GROUP_MIDDLEWARE, $this->MIDDILEWARE_ROUTE_REGION, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE, $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES);
+                break;
+            case "add-global-middleware":
+                $load = new middleware_handler();
+                $load->create_global_middleware($this->LOCAL_GROUP_MIDDLEWARE, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE);
                 break;
             case "run-logging":
                 $load = new log_handler();
