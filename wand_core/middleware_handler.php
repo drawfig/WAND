@@ -94,9 +94,9 @@ class middleware_handler extends wand_core {
         }
     }
 
-    public function create_middleware_bypass($group_routes, $region_routes, $global_bypass) {
+    public function create_middleware_bypass($group_routes, $region_routes, $global_bypass, $routes) {
         if($this->server_files_check()) {
-            return $this->generate_middleware_bypass($group_routes, $region_routes, $global_bypass);
+            return $this->generate_middleware_bypass($group_routes, $region_routes, $global_bypass, $routes);
         }
         else {
             print("\033[31m$this->LINE_BREAK\n");
@@ -119,6 +119,39 @@ class middleware_handler extends wand_core {
             print("\033[31m$this->LINE_BREAK\n");
             print("\033[0m");
             return false;
+        }
+    }
+
+    public function add_route_to_group($group_routes, $group_software, $region_routes, $region_software, $global_middleware, $global_bypass, $routes) {
+        if($this->server_files_check()) {
+            return $this->adding_route_to_group($group_routes, $group_software, $region_routes, $region_software, $global_middleware, $global_bypass, $routes);
+        }
+        else {
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31mServer files missing:");
+            print("\033[31mPlease run the wand 'init' command first to install the server.\n");
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[0m");
+            return false;
+        }
+    }
+    public function add_middleware_to_group($group_routes, $group_software, $region_routes, $region_software, $global_middleware, $global_bypass) {}
+
+    private function adding_route_to_group($group_routes, $group_software, $region_routes, $region_software, $global_middleware, $global_bypass, $routes) {
+        if(!$group_routes) {
+            include_once("Emberwhisk/src/Middleware/Middleware_Routing_Groups.php");
+            $routing_groups = new Middleware_Routing_Groups();
+            include_once("Emberwhisk/src/Middleware/Middleware_Software_Groups.php");
+            $software_groups = new Middleware_Software_Groups();
+            $group_routes = $routing_groups->LOCAL_GROUPS;
+            $region_routes = $routing_groups->REGIONAL_GROUPS;
+            $global_bypass = $routing_groups->GLOBAL_BYPASS_ROUTES;
+            $group_software = $software_groups->LOCAL_GROUP_MIDDLEWARE;
+            $region_software = $software_groups->REGIONAL_MIDDLEWARE;
+            $global_middleware = $software_groups->GLOBAL_MIDDLEWARE;
+        }
+        else {
+
         }
     }
 
@@ -158,7 +191,7 @@ class middleware_handler extends wand_core {
                         $selected = min(count($files) - 1, $selected + 1);
                         break;
                 }
-                $this->menu($files, $selected, "Select an environment config to generate");
+                $this->menu($files, $selected, "Select a middleware to add to the global middleware list");
             }
             else if($key == "\n") {
                 system('stty sane');
@@ -182,7 +215,7 @@ class middleware_handler extends wand_core {
 
     }
 
-    private function generate_middleware_bypass($group_routes, $region_routes, $global_bypass) {
+    private function generate_middleware_bypass($group_routes, $region_routes, $global_bypass, $routes) {
         if(!$global_bypass) {
             include_once("Emberwhisk/src/Middleware/Middleware_Routing_Groups.php");
             $routing_groups = new Middleware_Routing_Groups();
@@ -191,25 +224,55 @@ class middleware_handler extends wand_core {
             $global_bypass = $routing_groups->GLOBAL_BYPASS_ROUTES;
         }
 
-        $bypass_name = readline("Middleware Bypass Name: ");
-
-        if(in_array($bypass_name, $global_bypass)) {
-            print("Middleware bypass already exists.\n");
-            return false;
+        $routes_out = [];
+        foreach ($routes as $key => $route) {
+            if(!in_array($key, $global_bypass)) {
+                $routes_out[] = $key;
+            }
         }
 
-        if(strlen($bypass_name) > 3) {
-            $global_bypass[] = $bypass_name;
-            $this->gen_middleware_route_group($group_routes, $region_routes, $global_bypass);
-            print("Middleware bypass created.\n");
-            readLine("Press enter to continue.");
+        $routes_out[] = "Abort";
+
+        $selected = 0;
+        system('stty -echo -icanon');
+        $this->menu($routes_out, $selected, "Select a route to add to the global bypass list");
+
+        while(true) {
+            $key = fread(STDIN,1);
+            if($key === "\033") {
+                fread(STDIN,1);
+                $key_sequence = fread(STDIN,1);
+                switch($key_sequence) {
+                    case "A":
+                        $selected = max(0, $selected - 1);
+                        break;
+                    case "B":
+                        $selected = min(count($routes_out) - 1, $selected + 1);
+                        break;
+                }
+                $this->menu($routes_out, $selected, "Select a route to add to the global bypass list");
+            }
+            else if($key == "\n") {
+                system('stty sane');
+
+                $bypass_name = $routes_out[$selected];
+                break;
+            }
+        }
+        system('stty sane');
+
+        if($bypass_name == "Abort") {
             $this->clear_screen();
-            return true;
-        }
-        else {
-            print("Middleware bypass name must be longer than 3 characters.\n");
             return false;
         }
+
+        $global_bypass[] = $bypass_name;
+        $this->gen_middleware_route_group($group_routes, $region_routes, $global_bypass);
+        print("Middleware bypass created.\n");
+        readLine("Press enter to continue.");
+        $this->clear_screen();
+        return true;
+
     }
 
     private function generate_middleware_region($group_routes, $group_software, $region_routes, $region_software, $global_middleware, $global_bypass)

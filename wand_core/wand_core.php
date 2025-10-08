@@ -104,6 +104,10 @@ class wand_core {
                 $load = new middleware_handler();
                 $load->create_global_middleware($this->LOCAL_GROUP_MIDDLEWARE, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE);
                 break;
+            case "add-global-bypass":
+                $load = new middleware_handler();
+                $load->create_middleware_bypass($this->MIDDILEWARE_ROUTE_LOCAL_GROUPS, $this->MIDDILEWARE_ROUTE_REGION, $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES, $this->ROUTES);
+                break;
             case "run-logging":
                 $load = new log_handler();
                 $load->run_logging();
