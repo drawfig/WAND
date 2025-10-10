@@ -108,6 +108,26 @@ class wand_core {
                 $load = new middleware_handler();
                 $load->create_middleware_bypass($this->MIDDILEWARE_ROUTE_LOCAL_GROUPS, $this->MIDDILEWARE_ROUTE_REGION, $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES, $this->ROUTES);
                 break;
+            case "add-route-to-group":
+                $load = new middleware_handler();
+                $load->add_route_to_group($this->MIDDILEWARE_ROUTE_LOCAL_GROUPS, $this->MIDDILEWARE_ROUTE_REGION, $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES, $this->ROUTES);
+                break;
+            case "add-middleware-to-group":
+                $load = new middleware_handler();
+                $load->add_middleware_to_group($this->LOCAL_GROUP_MIDDLEWARE, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE);
+                break;
+            case "add-route-to-region":
+                $load = new middleware_handler();
+                $load->add_route_to_region($this->MIDDILEWARE_ROUTE_LOCAL_GROUPS, $this->MIDDILEWARE_ROUTE_REGION, $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES, $this->ROUTES);
+                break;
+            case "add-middleware-to-region":
+                $load = new middleware_handler();
+                $load->add_middleware_to_region($this->LOCAL_GROUP_MIDDLEWARE, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE);
+                break;
+            case "add-group-to-region":
+                $load = new middleware_handler();
+                $load->add_group_to_region($this->LOCAL_GROUP_MIDDLEWARE, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE);
+                break;
             case "run-logging":
                 $load = new log_handler();
                 $load->run_logging();
@@ -229,6 +249,41 @@ class wand_core {
         else {
             return "false";
         }
+    }
+
+    public function selection_menu($options, $text) {
+        print("\e[?25l");
+        $options[] = "Abort";
+        $selected = 0;
+        system('stty -echo -icanon');
+        $this->menu($options, $selected, $text);
+
+        while(true) {
+            $key = fread(STDIN,1);
+            if($key === "\033") {
+                fread(STDIN,1);
+                $key_sequence = fread(STDIN,1);
+                switch($key_sequence) {
+                    case "A":
+                        $selected = max(0, $selected - 1);
+                        break;
+                    case "B":
+                        $selected = min(count($options) - 1, $selected + 1);
+                        break;
+                }
+                $this->menu($options, $selected, $text);
+            }
+            else if($key == "\n") {
+                system('stty sane');
+
+                $output = $options[$selected];
+                break;
+            }
+        }
+        system('stty sane');
+        print("\e[?25h");
+
+        return $output;
     }
 
     public function make_table($title_row, $table_rows) {

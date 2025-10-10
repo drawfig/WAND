@@ -122,9 +122,9 @@ class middleware_handler extends wand_core {
         }
     }
 
-    public function add_route_to_group($group_routes, $group_software, $region_routes, $region_software, $global_middleware, $global_bypass, $routes) {
+    public function add_route_to_region($group_routes, $region_routes, $global_bypass, $routes) {
         if($this->server_files_check()) {
-            return $this->adding_route_to_group($group_routes, $group_software, $region_routes, $region_software, $global_middleware, $global_bypass, $routes);
+            return $this->adding_route_to_region($group_routes, $region_routes, $global_bypass, $routes);
         }
         else {
             print("\033[31m$this->LINE_BREAK\n");
@@ -135,24 +135,245 @@ class middleware_handler extends wand_core {
             return false;
         }
     }
-    public function add_middleware_to_group($group_routes, $group_software, $region_routes, $region_software, $global_middleware, $global_bypass) {}
 
-    private function adding_route_to_group($group_routes, $group_software, $region_routes, $region_software, $global_middleware, $global_bypass, $routes) {
+    public function add_route_to_group($group_routes, $region_routes, $global_bypass, $routes) {
+        if($this->server_files_check()) {
+            return $this->adding_route_to_group($group_routes, $region_routes, $global_bypass, $routes);
+        }
+        else {
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31mServer files missing:");
+            print("\033[31mPlease run the wand 'init' command first to install the server.\n");
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[0m");
+            return false;
+        }
+    }
+
+    public function add_middleware_to_region($group_software, $region_software, $global_middleware) {
+        if($this->server_files_check()) {
+            return $this->adding_middleware_to_region($group_software, $region_software, $global_middleware);
+        }
+        else {
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31mServer files missing:");
+            print("\033[31mPlease run the wand 'init' command first to install the server.\n");
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[0m");
+            return false;
+        }
+
+    }
+
+    public function add_group_to_region($group_software, $region_software, $global_middleware) {
+        if($this->server_files_check()) {
+            return $this->adding_group_to_region($group_software, $region_software, $global_middleware);
+        }
+        else {
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31mServer files missing:");
+            print("\033[31mPlease run the wand 'init' command first to install the server.\n");
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[0m");
+            return false;
+        }
+    }
+
+    public function add_middleware_to_group($group_software, $region_software, $global_middleware) {
+        if($this->server_files_check()) {
+            return $this->adding_middleware_to_group($group_software, $region_software, $global_middleware);
+        }
+        else {
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31mServer files missing:");
+            print("\033[31mPlease run the wand 'init' command first to install the server.\n");
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[0m");
+            return false;
+        }
+    }
+
+    private function adding_group_to_region($group_software, $region_software, $global_middleware) {
+        if(!$group_software) {
+            include_once("Emberwhisk/src/Middleware/Middleware_Software_Groups.php");
+            $route_software = new Middleware_Software_Groups();
+            $group_software = $route_software->LOCAL_GROUP_MIDDLEWARE;
+            $region_software = $route_software->REGIONAL_MIDDLEWARE;
+            $global_middleware = $route_software->GLOBAL_MIDDLEWARE;
+        }
+        $regions = array_keys($region_software);
+        $groups = array_keys($group_software);
+
+        $selected_region = $this->selection_menu($regions, "Select a region to add a Group to");
+
+        if($selected_region == "Abort") {
+            return false;
+        }
+        $available_groups = [];
+        var_dump($region_software[$selected_region]);
+        foreach($groups as $group) {
+            if(!in_array("GROUP:" . $group, $region_software[$selected_region])) {
+                $available_groups[] = $group;
+            }
+        }
+
+        $selected_group = $this->selection_menu($available_groups, "Select a group to add to {$selected_region}");
+        if($selected_group == "Abort") {
+            return false;
+        }
+
+        $region_software[$selected_region][] = "GROUP:" . $selected_group;
+        $this->gen_middleware_software_group($group_software, $region_software, $global_middleware);
+        print("Local Group added to Region.\n");
+        readLine("Press enter to continue.");
+        $this->clear_screen();
+        return true;
+    }
+
+    private  function adding_middleware_to_region($group_software, $region_software, $global_middleware) {
+        if(!$group_software) {
+            include_once("Emberwhisk/src/Middleware/Middleware_Software_Groups.php");
+            $route_software = new Middleware_Software_Groups();
+            $group_software = $route_software->LOCAL_GROUP_MIDDLEWARE;
+            $region_software = $route_software->REGIONAL_MIDDLEWARE;
+            $global_middleware = $route_software->GLOBAL_MIDDLEWARE;
+        }
+        $files_raw = scandir("Emberwhisk/src/Middleware");
+        $regions = array_keys($region_software);
+        $selected_region = $this->selection_menu($regions, "Select Region to add middleware to");
+
+        if($selected_region == "Abort") {
+            return false;
+        }
+
+        $middleware_available = [];
+        foreach ($files_raw as $raw_file) {
+            $file = str_replace(".php", "", $raw_file);
+            if(!in_array($raw_file, $this->EXCLUDE) && !in_array($file, $global_middleware) && !in_array($file, $region_software[$selected_region])) {
+                $middleware_available[] = $file;
+            }
+        }
+
+        $selected_middleware = $this->selection_menu($middleware_available, "Select Middleware to add middleware to {$selected_region}");
+        if($selected_middleware == "Abort") {
+            return false;
+        }
+
+        $region_software[$selected_region][] = $selected_middleware;
+        $this->gen_middleware_software_group($group_software, $region_software, $global_middleware);
+        print("Middleware added to Region.\n");
+        readLine("Press enter to continue.");
+        $this->clear_screen();
+        return true;
+
+    }
+
+    private function adding_middleware_to_group($group_software, $region_software, $global_middleware) {
+        if(!$group_software) {
+            include_once("Emberwhisk/src/Middleware/Middleware_Software_Groups.php");
+            $route_software = new Middleware_Software_Groups();
+            $group_software = $route_software->LOCAL_GROUP_MIDDLEWARE;
+            $region_software = $route_software->REGIONAL_MIDDLEWARE;
+            $global_middleware = $route_software->GLOBAL_MIDDLEWARE;
+        }
+
+        $files_raw = scandir("Emberwhisk/src/Middleware");
+        $groups = array_keys($group_software);
+        $selected_group = $this->selection_menu($groups, "Select the group to add a middleware to");
+        if($selected_group == "Abort") {
+            return false;
+        }
+
+        $middleware_available = [];
+        foreach($files_raw as $file_raw) {
+            $file = str_replace(".php", "", $file_raw);
+            if(!in_array($file_raw, $this->EXCLUDE) && !in_array($file, $global_middleware) && !in_array($file, $group_software[$selected_group])) {
+                $middleware_available[] = $file;
+            }
+        }
+
+        $selected_middleware = $this->selection_menu($middleware_available, "Select the middleware to add to the {$selected_group}");
+
+        if($selected_middleware == "Abort") {
+            return false;
+        }
+
+        $group_software[$selected_group][] = $selected_middleware;
+        $this->gen_middleware_software_group($group_software, $region_software, $global_middleware);
+        print("Middleware added to Local Group.\n");
+        readLine("Press enter to continue.");
+        $this->clear_screen();
+        return true;
+    }
+
+    private function adding_route_to_region($group_routes, $region_routes, $global_bypass, $routes) {
         if(!$group_routes) {
             include_once("Emberwhisk/src/Middleware/Middleware_Routing_Groups.php");
             $routing_groups = new Middleware_Routing_Groups();
-            include_once("Emberwhisk/src/Middleware/Middleware_Software_Groups.php");
-            $software_groups = new Middleware_Software_Groups();
             $group_routes = $routing_groups->LOCAL_GROUPS;
             $region_routes = $routing_groups->REGIONAL_GROUPS;
             $global_bypass = $routing_groups->GLOBAL_BYPASS_ROUTES;
-            $group_software = $software_groups->LOCAL_GROUP_MIDDLEWARE;
-            $region_software = $software_groups->REGIONAL_MIDDLEWARE;
-            $global_middleware = $software_groups->GLOBAL_MIDDLEWARE;
         }
-        else {
+        $route_names_raw = array_keys($routes);
+        $region_names = array_keys($region_routes);
+        $selected_region = $this->selection_menu($region_names, "Select a region to add a route to");
+        if($selected_region == "Abort") {
+            return false;
+        }
+        $region_routes_names = [];
+        foreach($route_names_raw as $route_name) {
+            if(!in_array($route_name, $region_routes[$selected_region])) {
+                $region_routes_names[] = $route_name;
+            }
+        }
 
+        $selected_route = $this->selection_menu($region_routes_names, "Select the route to add to the {$selected_region}");
+        if($selected_route == "Abort") {
+            return false;
         }
+
+        $region_routes[$selected_region][] = $selected_route;
+        $this->gen_middleware_route_group($group_routes, $region_routes, $global_bypass);
+        print("Route added to Region.\n");
+        readLine("Press enter to continue.");
+        $this->clear_screen();
+        return true;
+    }
+
+    private function adding_route_to_group($group_routes, $region_routes, $global_bypass, $routes) {
+        if(!$group_routes) {
+            include_once("Emberwhisk/src/Middleware/Middleware_Routing_Groups.php");
+            $routing_groups = new Middleware_Routing_Groups();
+            $group_routes = $routing_groups->LOCAL_GROUPS;
+            $region_routes = $routing_groups->REGIONAL_GROUPS;
+            $global_bypass = $routing_groups->GLOBAL_BYPASS_ROUTES;
+        }
+        $route_names_raw = array_keys($routes);
+        $group_names = array_keys($group_routes);
+        $selected_group = $this->selection_menu($group_names, "Select a group to add to the group.");
+        if($selected_group == "Abort") {
+            $this->clear_screen();
+            return false;
+        }
+        $route_names = [];
+        foreach($route_names_raw as $route_out) {
+            if(!in_array($route_out, $group_routes[$selected_group])) {
+                $route_names[] = $route_out;
+            }
+        }
+        $selected_route = $this->selection_menu($route_names, "What route do you want to add to the `{$selected_group}` local group?");
+        if($selected_route == "Abort") {
+            $this->clear_screen();
+            return false;
+        }
+        $group_routes[$selected_group][] = $selected_route;
+
+
+        $this->gen_middleware_route_group($group_routes, $region_routes, $global_bypass);
+        print("Route added to Local Group.\n");
+        readLine("Press enter to continue.");
+        $this->clear_screen();
+        return true;
     }
 
     private function generate_global_middleware($group_middleware, $region_software, $global_middleware) {
