@@ -29,6 +29,7 @@ class middleware_handler extends wand_core {
 
                 if (strlen($middleware_name) > 3 && !$this->check_for_middleware_name($middleware_name)) {
                     $this->generate_middleware($middleware_name);
+                    break;
                 }
                 else {
                     print("Middleware name must be longer than 3 characters.\n");
@@ -690,7 +691,7 @@ class middleware_handler extends wand_core {
         }
 
 
-        $selected_middleware = $this->selection_menu($group_software, "Select the middleware to remove from the {$selected_group}");
+        $selected_middleware = $this->selection_menu($group_software[$selected_group], "Select the middleware to remove from the {$selected_group}");
 
         if($selected_middleware == "Abort") {
             return false;
@@ -720,13 +721,13 @@ class middleware_handler extends wand_core {
         }
 
 
-        $selected_middleware = $this->selection_menu($region_software, "Select the middleware or group to remove from the {$selected_region}");
+        $selected_middleware = $this->selection_menu($region_software[$selected_region], "Select the middleware or group to remove from the {$selected_region}");
 
         if($selected_middleware == "Abort") {
             return false;
         }
 
-        $group_software[$selected_region] = $this->delete_regional_middleware($selected_middleware, $region_software[$selected_region]);
+        $region_software[$selected_region] = $this->delete_regional_middleware($selected_middleware, $region_software[$selected_region]);
         $this->gen_middleware_software_group($group_software, $region_software, $global_middleware);
         print("Middleware removed from Region.\n");
         readLine("Press enter to continue.");
