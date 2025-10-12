@@ -193,6 +193,374 @@ class middleware_handler extends wand_core {
         }
     }
 
+    public function remove_middleware_from_group($group_software, $region_software, $global_middleware) {
+        if($this->server_files_check()) {
+            return $this->removing_middleware_from_group($group_software, $region_software, $global_middleware);
+        }
+        else {
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31mServer files missing:");
+            print("\033[31mPlease run the wand 'init' command first to install the server.\n");
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[0m");
+            return false;
+        }
+    }
+
+    public function remove_middleware_from_region($group_software, $region_software, $global_middleware) {
+        if($this->server_files_check()) {
+            return $this->removing_middleware_from_region($group_software, $region_software, $global_middleware);
+        }
+        else {
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31mServer files missing:");
+            print("\033[31mPlease run the wand 'init' command first to install the server.\n");
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[0m");
+            return false;
+        }
+    }
+
+    public function remove_middleware_group($group_routes, $group_software, $region_routes, $region_software, $global_middleware, $global_bypass) {
+        if($this->server_files_check()) {
+            return $this->removing_middleware_group($group_routes, $group_software, $region_routes, $region_software, $global_middleware, $global_bypass);
+        }
+        else {
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31mServer files missing:");
+            print("\033[31mPlease run the wand 'init' command first to install the server.\n");
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[0m");
+            return false;
+        }
+    }
+
+    public function remove_middleware_region($group_routes, $group_software, $region_routes, $region_software, $global_middleware, $global_bypass) {
+        if($this->server_files_check()) {
+            return $this->removing_middleware_region($group_routes, $group_software, $region_routes, $region_software, $global_middleware, $global_bypass);
+        }
+        else {
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31mServer files missing:");
+            print("\033[31mPlease run the wand 'init' command first to install the server.\n");
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[0m");
+            return false;
+        }
+    }
+
+
+    public function remove_middleware($group_software, $region_software, $global_middleware) {
+        if($this->server_files_check()) {
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31mWARNING! Middleware will be permanently deleted!\n");
+            print("\033[31mRecommended to simply take middleware out of routing\n");
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[0m");
+            $continue = $this->selection_menu(["Yes", "No"], "Do you want to continue anyway?");
+
+            if($continue == "Yes") {
+                return $this->removing_middleware($group_software, $region_software, $global_middleware);
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31mServer files missing:");
+            print("\033[31mPlease run the wand 'init' command first to install the server.\n");
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[0m");
+            return false;
+        }
+    }
+
+    public function remove_global_bypass($group_routes, $regional_routes, $global_bypass) {
+        if($this->server_files_check()) {
+            return $this->removing_global_bypass($group_routes, $regional_routes, $global_bypass);
+        }
+        else {
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31mServer files missing:");
+            print("\033[31mPlease run the wand 'init' command first to install the server.\n");
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[0m");
+            return false;
+        }
+    }
+
+    public function remove_route_from_group($group_routes, $regional_routes, $global_bypass) {
+        if($this->server_files_check()) {
+            return $this->removing_route_from_group($group_routes, $regional_routes, $global_bypass);
+        }
+        else {
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31mServer files missing:");
+            print("\033[31mPlease run the wand 'init' command first to install the server.\n");
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[0m");
+            return false;
+        }
+    }
+
+    public function remove_route_from_region($group_routes, $regional_routes, $global_bypass) {
+        if($this->server_files_check()) {
+            return $this->removing_route_from_region($group_routes, $regional_routes, $global_bypass);
+        }
+        else {
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31mServer files missing:");
+            print("\033[31mPlease run the wand 'init' command first to install the server.\n");
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[0m");
+            return false;
+        }
+    }
+
+    public function remove_global_middleware($group_software, $region_software, $global_middleware) {
+        if($this->server_files_check()) {
+            return $this->removing_global_middleware($group_software, $region_software, $global_middleware);
+        }
+        else {
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31mServer files missing:");
+            print("\033[31mPlease run the wand 'init' command first to install the server.\n");
+            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[0m");
+            return false;
+        }
+    }
+
+    private function removing_middleware($group_software, $region_software, $global_middleware) {
+        if(!$group_software) {
+            include_once("Emberwhisk/src/Middleware/Middleware_Software_Groups.php");
+            $route_software = new Middleware_Software_Groups();
+            $group_software = $route_software->LOCAL_GROUP_MIDDLEWARE;
+            $region_software = $route_software->REGIONAL_MIDDLEWARE;
+            $global_middleware = $route_software->GLOBAL_MIDDLEWARE;
+        }
+
+        $files_raw = scandir("Emberwhisk/src/Middleware");
+        $middleware = [];
+
+        foreach($files_raw as $raw_file) {
+            if(!in_array($raw_file, $this->EXCLUDE)) {
+                $file = str_replace(".php", "", $raw_file);
+                $middleware[] = $file;
+            }
+        }
+
+        $selected_middleware = $this->selection_menu($middleware, "Selected a middleware to delete");
+        if($selected_middleware == "Abort") {
+            return false;
+        }
+
+        $global_middleware = $this->delete_global_middleware($selected_middleware, $global_middleware);
+
+        $new_region = [];
+        foreach($region_software as $region => $region_middleware) {
+            $new_region[$region] = $this->delete_regional_middleware($selected_middleware, $region_middleware);
+        }
+
+        $new_group_middleware = [];
+        foreach($group_software as $group => $group_middleware) {
+            $new_group_middleware[$group] = $this->delete_group_middleware($selected_middleware, $group_middleware);
+        }
+
+        $group_software = $new_group_middleware;
+        $region_software = $new_region;
+
+        $this->gen_middleware_software_group($group_software, $region_software, $global_middleware);
+        unlink("Emberwhisk/src/Middleware/" . $selected_middleware . ".php");
+        print("Middleware Removed from server.\n");
+        readLine("Press enter to continue.");
+        $this->clear_screen();
+        return [$group_software, $region_software, $global_middleware];
+    }
+
+    private function delete_group_middleware($rmv_middleware, $group_software) {
+        $output = [];
+        foreach ($group_software as $middleware) {
+            if($middleware != $rmv_middleware) {
+                $output[] = $middleware;
+            }
+        }
+
+        return $output;
+    }
+
+    private function delete_regional_middleware($rmv_middleware, $regional_middleware) {
+        $output = [];
+        foreach ($regional_middleware as $middleware) {
+            if($middleware != $rmv_middleware) {
+                $output[] = $middleware;
+            }
+        }
+
+        return $output;
+    }
+
+    private function delete_global_middleware($rmv_middleware, $global_middleware) {
+        $output = [];
+        foreach($global_middleware as $middleware) {
+            if($middleware != $rmv_middleware) {
+                $output[] = $middleware;
+            }
+        }
+
+        return $output;
+    }
+
+    private function removing_global_bypass($group_routes, $region_routes, $global_bypass) {
+        if(!$group_routes) {
+            include_once("Emberwhisk/src/Middleware/Middleware_Routing_Groups.php");
+            $routing_groups = new Middleware_Routing_Groups();
+
+            $group_routes = $routing_groups->LOCAL_GROUPS;
+            $region_routes = $routing_groups->REGIONAL_GROUPS;
+            $global_bypass = $routing_groups->GLOBAL_BYPASS_ROUTES;
+        }
+
+        $selected_route = $this->selection_menu($global_bypass, "Select Route to remove from global bypass");
+
+        $new_bypass = [];
+        foreach($global_bypass as $route) {
+            if($route != $selected_route) {
+                $new_bypass[] = $route;
+            }
+        }
+
+        $global_bypass = $new_bypass;
+
+        $this->gen_middleware_route_group($group_routes, $region_routes, $global_bypass);
+        print("Middleware bypass Removed\n");
+        readLine("Press enter to continue.");
+        $this->clear_screen();
+        return [$group_routes, $region_routes, $global_bypass];
+    }
+
+    private function removing_middleware_region($group_routes, $group_software, $region_routes, $region_software, $global_middleware, $global_bypass) {
+        if(!$group_routes) {
+            include_once("Emberwhisk/src/Middleware/Middleware_Routing_Groups.php");
+            $routing_groups = new Middleware_Routing_Groups();
+
+            $group_routes = $routing_groups->LOCAL_GROUPS;
+            $region_routes = $routing_groups->REGIONAL_GROUPS;
+            $global_bypass = $routing_groups->GLOBAL_BYPASS_ROUTES;
+
+        }
+        if(!$group_software) {
+            include_once("Emberwhisk/src/Middleware/Middleware_Software_Groups.php");
+            $software_groups = new Middleware_Software_Groups();
+            $group_software = $software_groups->LOCAL_GROUP_MIDDLEWARE;
+            $region_software = $software_groups->REGIONAL_MIDDLEWARE;
+            $global_middleware = $software_groups->GLOBAL_MIDDLEWARE;
+        }
+
+        $regions = array_keys($region_routes);
+
+        $selected_region = $this->selection_menu($regions, "Selected a region to delete");
+        if($selected_region == "Abort") {
+            return false;
+        }
+
+        $new_region_routes = [];
+        foreach($region_routes as $region => $region_route_list) {
+            if($region != $selected_region) {
+                $new_region_routes[$region] = $region_route_list;
+            }
+        }
+        $new_region_middleware = [];
+        foreach($region_software as $region => $region_middleware) {
+            if($region != $selected_region) {
+                $new_region_middleware[$region] = $region_middleware;
+            }
+        }
+
+        $region_routes = $new_region_routes;
+        $region_software = $new_region_middleware;
+        $this->gen_middleware_route_group($group_routes, $region_routes, $global_bypass);
+        $this->gen_middleware_software_group($group_software, $region_software, $global_middleware);
+        print("Region Removed from server\n");
+        readLine("Press enter to continue.");
+        $this->clear_screen();
+        return [$group_routes, $group_software, $region_routes, $region_software, $global_middleware, $global_bypass];
+    }
+
+    private function removing_global_middleware($group_software, $region_software, $global_middleware) {
+        if(!$group_software) {
+            include_once("Emberwhisk/src/Middleware/Middleware_Software_Groups.php");
+            $software_groups = new Middleware_Software_Groups();
+            $group_software = $software_groups->LOCAL_GROUP_MIDDLEWARE;
+            $region_software = $software_groups->REGIONAL_MIDDLEWARE;
+            $global_middleware = $software_groups->GLOBAL_MIDDLEWARE;
+        }
+
+        $selected_middleware = $this->selection_menu($global_middleware, "Select a middleware to delete");
+        $new_global_middleware = [];
+        foreach($global_middleware as $middleware) {
+            if($middleware != $selected_middleware) {
+                $new_global_middleware[] = $middleware;
+            }
+        }
+
+        $global_middleware = $new_global_middleware;
+        $this->gen_middleware_software_group($group_software, $region_software, $global_middleware);
+        print("Global Middleware Removed from server\n");
+        readLine("Press enter to continue.");
+        $this->clear_screen();
+        return [$group_software, $region_software, $global_middleware];
+    }
+
+    private function removing_middleware_group($group_routes, $group_software, $region_routes, $region_software, $global_middleware, $global_bypass) {
+        if(!$group_routes) {
+            include_once("Emberwhisk/src/Middleware/Middleware_Routing_Groups.php");
+            $routing_groups = new Middleware_Routing_Groups();
+
+            $group_routes = $routing_groups->LOCAL_GROUPS;
+            $region_routes = $routing_groups->REGIONAL_GROUPS;
+            $global_bypass = $routing_groups->GLOBAL_BYPASS_ROUTES;
+
+        }
+        if(!$group_software) {
+            include_once("Emberwhisk/src/Middleware/Middleware_Software_Groups.php");
+            $software_groups = new Middleware_Software_Groups();
+            $group_software = $software_groups->LOCAL_GROUP_MIDDLEWARE;
+            $region_software = $software_groups->REGIONAL_MIDDLEWARE;
+            $global_middleware = $software_groups->GLOBAL_MIDDLEWARE;
+        }
+
+        $groups = array_keys($group_routes);
+
+        $selected_group = $this->selection_menu($groups, "Selected a group to delete");
+        if($selected_group == "Abort") {
+            return false;
+        }
+
+        $new_group_routes = [];
+        foreach($group_routes as $group => $group_route_list) {
+            if($group != $selected_group) {
+                $new_group_routes[$group] = $group_route_list;
+            }
+        }
+        $new_group_middleware = [];
+        foreach($group_software as $group => $group_middleware) {
+            if($group != $selected_group) {
+                $new_group_middleware[$group] = $group_middleware;
+            }
+        }
+
+        $group_routes = $new_group_routes;
+        $group_software = $new_group_middleware;
+        $this->gen_middleware_route_group($group_routes, $region_routes, $global_bypass);
+        $this->gen_middleware_software_group($group_software, $region_software, $global_middleware);
+        print("Local Group Removed from server\n");
+        readLine("Press enter to continue.");
+        $this->clear_screen();
+        return [$group_routes, $group_software, $region_routes, $region_software, $global_middleware, $global_bypass];
+    }
+
     private function adding_group_to_region($group_software, $region_software, $global_middleware) {
         if(!$group_software) {
             include_once("Emberwhisk/src/Middleware/Middleware_Software_Groups.php");
@@ -227,7 +595,7 @@ class middleware_handler extends wand_core {
         print("Local Group added to Region.\n");
         readLine("Press enter to continue.");
         $this->clear_screen();
-        return true;
+        return [$group_software, $region_software, $global_middleware];
     }
 
     private  function adding_middleware_to_region($group_software, $region_software, $global_middleware) {
@@ -264,7 +632,7 @@ class middleware_handler extends wand_core {
         print("Middleware added to Region.\n");
         readLine("Press enter to continue.");
         $this->clear_screen();
-        return true;
+        return [$group_software, $region_software, $global_middleware];
 
     }
 
@@ -303,7 +671,67 @@ class middleware_handler extends wand_core {
         print("Middleware added to Local Group.\n");
         readLine("Press enter to continue.");
         $this->clear_screen();
-        return true;
+        return [$group_software, $region_software, $global_middleware];
+    }
+
+    private function removing_middleware_from_group($group_software, $region_software, $global_middleware) {
+        if(!$group_software) {
+            include_once("Emberwhisk/src/Middleware/Middleware_Software_Groups.php");
+            $route_software = new Middleware_Software_Groups();
+            $group_software = $route_software->LOCAL_GROUP_MIDDLEWARE;
+            $region_software = $route_software->REGIONAL_MIDDLEWARE;
+            $global_middleware = $route_software->GLOBAL_MIDDLEWARE;
+        }
+
+        $groups = array_keys($group_software);
+        $selected_group = $this->selection_menu($groups, "Select the group to remove a middleware from");
+        if($selected_group == "Abort") {
+            return false;
+        }
+
+
+        $selected_middleware = $this->selection_menu($group_software, "Select the middleware to remove from the {$selected_group}");
+
+        if($selected_middleware == "Abort") {
+            return false;
+        }
+
+        $group_software[$selected_group] = $this->delete_group_middleware($selected_middleware, $group_software[$selected_group]);
+        $this->gen_middleware_software_group($group_software, $region_software, $global_middleware);
+        print("Middleware removed from Local Group.\n");
+        readLine("Press enter to continue.");
+        $this->clear_screen();
+        return [$group_software, $region_software, $global_middleware];
+    }
+
+    private function removing_middleware_from_region($group_software, $region_software, $global_middleware) {
+        if(!$region_software) {
+            include_once("Emberwhisk/src/Middleware/Middleware_Software_Groups.php");
+            $route_software = new Middleware_Software_Groups();
+            $group_software = $route_software->LOCAL_GROUP_MIDDLEWARE;
+            $region_software = $route_software->REGIONAL_MIDDLEWARE;
+            $global_middleware = $route_software->GLOBAL_MIDDLEWARE;
+        }
+
+        $regions = array_keys($region_software);
+        $selected_region = $this->selection_menu($regions, "Select the region to remove a middleware or group from");
+        if($selected_region == "Abort") {
+            return false;
+        }
+
+
+        $selected_middleware = $this->selection_menu($region_software, "Select the middleware or group to remove from the {$selected_region}");
+
+        if($selected_middleware == "Abort") {
+            return false;
+        }
+
+        $group_software[$selected_region] = $this->delete_regional_middleware($selected_middleware, $region_software[$selected_region]);
+        $this->gen_middleware_software_group($group_software, $region_software, $global_middleware);
+        print("Middleware removed from Region.\n");
+        readLine("Press enter to continue.");
+        $this->clear_screen();
+        return [$group_software, $region_software, $global_middleware];
     }
 
     private function adding_route_to_region($group_routes, $region_routes, $global_bypass, $routes) {
@@ -337,7 +765,81 @@ class middleware_handler extends wand_core {
         print("Route added to Region.\n");
         readLine("Press enter to continue.");
         $this->clear_screen();
-        return true;
+        return [$group_routes, $region_routes, $global_bypass];
+    }
+
+    private function removing_route_from_region($group_routes, $region_routes, $global_bypass) {
+        if(!$group_routes) {
+            include_once("Emberwhisk/src/Middleware/Middleware_Routing_Groups.php");
+            $routing_groups = new Middleware_Routing_Groups();
+            $group_routes = $routing_groups->LOCAL_GROUPS;
+            $region_routes = $routing_groups->REGIONAL_GROUPS;
+            $global_bypass = $routing_groups->GLOBAL_BYPASS_ROUTES;
+        }
+        $region_names = array_keys($region_routes);
+        $selected_region = $this->selection_menu($region_names, "Select a region to remove a route from.");
+        if($selected_region == "Abort") {
+            $this->clear_screen();
+            return false;
+        }
+
+        $selected_route = $this->selection_menu($region_routes[$selected_region], "What route do you want to remove from {$selected_region}?");
+        if($selected_route == "Abort") {
+            $this->clear_screen();
+            return false;
+        }
+
+        $new_routes = [];
+        foreach($region_routes[$selected_region] as $route) {
+            if($route != $selected_route) {
+                $new_routes[] = $route;
+            }
+        }
+
+        $region_routes[$selected_region] = $new_routes;
+
+        $this->gen_middleware_route_group($group_routes, $region_routes, $global_bypass);
+        print("Route Removed from Region.\n");
+        readLine("Press enter to continue.");
+        $this->clear_screen();
+        return [$group_routes, $region_routes, $global_bypass];
+    }
+
+    private function removing_route_from_group($group_routes, $region_routes, $global_bypass) {
+        if(!$group_routes) {
+            include_once("Emberwhisk/src/Middleware/Middleware_Routing_Groups.php");
+            $routing_groups = new Middleware_Routing_Groups();
+            $group_routes = $routing_groups->LOCAL_GROUPS;
+            $region_routes = $routing_groups->REGIONAL_GROUPS;
+            $global_bypass = $routing_groups->GLOBAL_BYPASS_ROUTES;
+        }
+        $group_names = array_keys($group_routes);
+        $selected_group = $this->selection_menu($group_names, "Select a group to remove a route from.");
+        if($selected_group == "Abort") {
+            $this->clear_screen();
+            return false;
+        }
+
+        $selected_route = $this->selection_menu($group_routes[$selected_group], "What route do you want to remove from the `{$selected_group}` local group?");
+        if($selected_route == "Abort") {
+            $this->clear_screen();
+            return false;
+        }
+
+        $new_routes = [];
+        foreach($group_routes[$selected_group] as $route) {
+            if($route != $selected_route) {
+                $new_routes[] = $route;
+            }
+        }
+
+        $group_routes[$selected_group] = $new_routes;
+
+        $this->gen_middleware_route_group($group_routes, $region_routes, $global_bypass);
+        print("Route Removed from Local Group.\n");
+        readLine("Press enter to continue.");
+        $this->clear_screen();
+        return [$group_routes, $region_routes, $global_bypass];
     }
 
     private function adding_route_to_group($group_routes, $region_routes, $global_bypass, $routes) {
@@ -373,7 +875,7 @@ class middleware_handler extends wand_core {
         print("Route added to Local Group.\n");
         readLine("Press enter to continue.");
         $this->clear_screen();
-        return true;
+        return [$group_routes, $region_routes, $global_bypass];
     }
 
     private function generate_global_middleware($group_middleware, $region_software, $global_middleware) {
@@ -393,35 +895,8 @@ class middleware_handler extends wand_core {
                 $files[] = $file_prep;
             }
         }
-        $files[] = "Abort";
 
-        $selected = 0;
-        system('stty -echo -icanon');
-        $this->menu($files, $selected, "Select a middleware to add to the global middleware list");
-
-        while(true) {
-            $key = fread(STDIN,1);
-            if($key === "\033") {
-                fread(STDIN,1);
-                $key_sequence = fread(STDIN,1);
-                switch($key_sequence) {
-                    case "A":
-                        $selected = max(0, $selected - 1);
-                        break;
-                    case "B":
-                        $selected = min(count($files) - 1, $selected + 1);
-                        break;
-                }
-                $this->menu($files, $selected, "Select a middleware to add to the global middleware list");
-            }
-            else if($key == "\n") {
-                system('stty sane');
-
-                $software = $files[$selected];
-                break;
-            }
-        }
-        system('stty sane');
+        $software = $this->selection_menu($files, "Select a middleware to add to the global middleware list");
 
         if($software == "Abort") {
             $this->clear_screen();
@@ -432,7 +907,7 @@ class middleware_handler extends wand_core {
         print("Global middleware created.\n");
         readLine("Press enter to continue.");
         $this->clear_screen();
-        return true;
+        return [$group_middleware, $region_software, $global_middleware];
 
     }
 
@@ -451,36 +926,7 @@ class middleware_handler extends wand_core {
                 $routes_out[] = $key;
             }
         }
-
-        $routes_out[] = "Abort";
-
-        $selected = 0;
-        system('stty -echo -icanon');
-        $this->menu($routes_out, $selected, "Select a route to add to the global bypass list");
-
-        while(true) {
-            $key = fread(STDIN,1);
-            if($key === "\033") {
-                fread(STDIN,1);
-                $key_sequence = fread(STDIN,1);
-                switch($key_sequence) {
-                    case "A":
-                        $selected = max(0, $selected - 1);
-                        break;
-                    case "B":
-                        $selected = min(count($routes_out) - 1, $selected + 1);
-                        break;
-                }
-                $this->menu($routes_out, $selected, "Select a route to add to the global bypass list");
-            }
-            else if($key == "\n") {
-                system('stty sane');
-
-                $bypass_name = $routes_out[$selected];
-                break;
-            }
-        }
-        system('stty sane');
+        $bypass_name = $this->selection_menu($routes_out, "Select a route to add to the global bypass list");
 
         if($bypass_name == "Abort") {
             $this->clear_screen();
@@ -492,7 +938,7 @@ class middleware_handler extends wand_core {
         print("Middleware bypass created.\n");
         readLine("Press enter to continue.");
         $this->clear_screen();
-        return true;
+        return [$group_routes, $region_routes, $global_bypass];
 
     }
 
@@ -501,11 +947,15 @@ class middleware_handler extends wand_core {
         if(!$region_routes) {
             include_once("Emberwhisk/src/Middleware/Middleware_Routing_Groups.php");
             $routing_groups = new Middleware_Routing_Groups();
-            include_once("Emberwhisk/src/Middleware/Middleware_Software_Groups.php");
-            $software_groups = new Middleware_Software_Groups();
+
             $group_routes = $routing_groups->LOCAL_GROUPS;
             $region_routes = $routing_groups->REGIONAL_GROUPS;
             $global_bypass = $routing_groups->GLOBAL_BYPASS_ROUTES;
+
+        }
+        if(!$region_software) {
+            include_once("Emberwhisk/src/Middleware/Middleware_Software_Groups.php");
+            $software_groups = new Middleware_Software_Groups();
             $group_software = $software_groups->LOCAL_GROUP_MIDDLEWARE;
             $region_software = $software_groups->REGIONAL_MIDDLEWARE;
             $global_middleware = $software_groups->GLOBAL_MIDDLEWARE;
@@ -526,7 +976,7 @@ class middleware_handler extends wand_core {
             print("Middleware region created.\n");
             readLine("Press enter to continue.");
             $this->clear_screen();
-            return true;
+            return [$group_routes, $group_software, $region_routes, $region_software, $global_middleware, $global_bypass];
         }
         else {
             print("Middleware region name must be longer than 3 characters.\n");
@@ -538,11 +988,15 @@ class middleware_handler extends wand_core {
         if(!$group_routes) {
             include_once("Emberwhisk/src/Middleware/Middleware_Routing_Groups.php");
             $routing_groups = new Middleware_Routing_Groups();
-            include_once("Emberwhisk/src/Middleware/Middleware_Software_Groups.php");
-            $software_groups = new Middleware_Software_Groups();
+
             $group_routes = $routing_groups->LOCAL_GROUPS;
             $region_routes = $routing_groups->REGIONAL_GROUPS;
             $global_bypass = $routing_groups->GLOBAL_BYPASS_ROUTES;
+
+        }
+        if(!$group_software) {
+            include_once("Emberwhisk/src/Middleware/Middleware_Software_Groups.php");
+            $software_groups = new Middleware_Software_Groups();
             $group_software = $software_groups->LOCAL_GROUP_MIDDLEWARE;
             $region_software = $software_groups->REGIONAL_MIDDLEWARE;
             $global_middleware = $software_groups->GLOBAL_MIDDLEWARE;
@@ -563,7 +1017,7 @@ class middleware_handler extends wand_core {
             print("Middleware group created.\n");
             readLine("Press enter to continue.");
             $this->clear_screen();
-            return true;
+            return [$group_routes, $group_software, $region_routes, $region_software, $global_middleware, $global_bypass];
         }
         else {
             print("Middleware group name must be longer than 3 characters.\n");
@@ -724,7 +1178,6 @@ class ' . $middleware_name . ' {
         fwrite($file_create, $file_content);
         print("Middleware created.\n");
         readLine("Press enter to continue.");
-        $this->clear_screen();
         $this->clear_screen();
     }
 

@@ -24,6 +24,7 @@ class wand_core {
                            \n";
 
     public $LINE_BREAK = "=======================================================================\n";
+    public $LINE_LOWER = "_______________________________________________________________________\n";
 
     private function command_handler($command) {
 
@@ -92,41 +93,179 @@ class wand_core {
                 $load = new middleware_handler();
                 $load->create_middleware();
                 break;
+            case "rmv-middleware":
+                $load = new middleware_handler();
+                $output = $load->remove_middleware($this->LOCAL_GROUP_MIDDLEWARE, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE);
+                if($output) {
+                    $this->LOCAL_GROUP_MIDDLEWARE = $output[0];
+                    $this->REGIONAL_MIDDLEWARE = $output[1];
+                    $this->GLOBAL_MIDDLEWARE = $output[2];
+                }
+                break;
             case "add-middleware-group":
                 $load = new middleware_handler();
-                $load->create_middleware_group($this->MIDDILEWARE_ROUTE_LOCAL_GROUPS, $this->LOCAL_GROUP_MIDDLEWARE, $this->MIDDILEWARE_ROUTE_REGION, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE, $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES);
+                $output = $load->create_middleware_group($this->MIDDILEWARE_ROUTE_LOCAL_GROUPS, $this->LOCAL_GROUP_MIDDLEWARE, $this->MIDDILEWARE_ROUTE_REGION, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE, $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES);
+                if($output) {
+                    $this->MIDDILEWARE_ROUTE_LOCAL_GROUPS = $output[0];
+                    $this->LOCAL_GROUP_MIDDLEWARE = $output[1];
+                    $this->MIDDILEWARE_ROUTE_REGION = $output[2];
+                    $this->REGIONAL_MIDDLEWARE = $output[3];
+                    $this->GLOBAL_MIDDLEWARE = $output[4];
+                    $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES = $output[5];
+                }
+                break;
+            case "rmv-middleware-group":
+                $load = new middleware_handler();
+                $output = $load->remove_middleware_group($this->MIDDILEWARE_ROUTE_LOCAL_GROUPS, $this->LOCAL_GROUP_MIDDLEWARE, $this->MIDDILEWARE_ROUTE_REGION, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE, $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES);
+                if($output) {
+                    $this->MIDDILEWARE_ROUTE_LOCAL_GROUPS = $output[0];
+                    $this->LOCAL_GROUP_MIDDLEWARE = $output[1];
+                    $this->MIDDILEWARE_ROUTE_REGION = $output[2];
+                    $this->REGIONAL_MIDDLEWARE = $output[3];
+                    $this->GLOBAL_MIDDLEWARE = $output[4];
+                    $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES = $output[5];
+                }
                 break;
             case "add-middleware-region":
                 $load = new middleware_handler();
-                $load->create_middleware_region($this->MIDDILEWARE_ROUTE_LOCAL_GROUPS, $this->LOCAL_GROUP_MIDDLEWARE, $this->MIDDILEWARE_ROUTE_REGION, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE, $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES);
+                $output = $load->create_middleware_region($this->MIDDILEWARE_ROUTE_LOCAL_GROUPS, $this->LOCAL_GROUP_MIDDLEWARE, $this->MIDDILEWARE_ROUTE_REGION, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE, $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES);
+                if($output) {
+                    $this->MIDDILEWARE_ROUTE_LOCAL_GROUPS = $output[0];
+                    $this->LOCAL_GROUP_MIDDLEWARE = $output[1];
+                    $this->MIDDILEWARE_ROUTE_REGION = $output[2];
+                    $this->REGIONAL_MIDDLEWARE = $output[3];
+                    $this->GLOBAL_MIDDLEWARE = $output[4];
+                    $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES = $output[5];
+                }
+                break;
+            case "rmv-middleware-region":
+                $load = new middleware_handler();
+                $output = $load->remove_middleware_region($this->MIDDILEWARE_ROUTE_LOCAL_GROUPS, $this->LOCAL_GROUP_MIDDLEWARE, $this->MIDDILEWARE_ROUTE_REGION, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE, $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES);
+                if($output) {
+                    $this->MIDDILEWARE_ROUTE_LOCAL_GROUPS = $output[0];
+                    $this->LOCAL_GROUP_MIDDLEWARE = $output[1];
+                    $this->MIDDILEWARE_ROUTE_REGION = $output[2];
+                    $this->REGIONAL_MIDDLEWARE = $output[3];
+                    $this->GLOBAL_MIDDLEWARE = $output[4];
+                    $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES = $output[5];
+                }
                 break;
             case "add-global-middleware":
                 $load = new middleware_handler();
-                $load->create_global_middleware($this->LOCAL_GROUP_MIDDLEWARE, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE);
+                $output = $load->create_global_middleware($this->LOCAL_GROUP_MIDDLEWARE, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE);
+                if($output) {
+                    $this->LOCAL_GROUP_MIDDLEWARE = $output[0];
+                    $this->REGIONAL_MIDDLEWARE = $output[1];
+                    $this->GLOBAL_MIDDLEWARE = $output[2];
+                }
+                break;
+            case "rmv-global-middleware":
+                $load = new middleware_handler();
+                $output = $load->remove_global_middleware($this->LOCAL_GROUP_MIDDLEWARE, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE);
+                if($output) {
+                    $this->LOCAL_GROUP_MIDDLEWARE = $output[0];
+                    $this->REGIONAL_MIDDLEWARE = $output[1];
+                    $this->GLOBAL_MIDDLEWARE = $output[2];
+                }
                 break;
             case "add-global-bypass":
                 $load = new middleware_handler();
-                $load->create_middleware_bypass($this->MIDDILEWARE_ROUTE_LOCAL_GROUPS, $this->MIDDILEWARE_ROUTE_REGION, $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES, $this->ROUTES);
+                $output = $load->create_middleware_bypass($this->MIDDILEWARE_ROUTE_LOCAL_GROUPS, $this->MIDDILEWARE_ROUTE_REGION, $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES, $this->ROUTES);
+                if($output) {
+                    $this->MIDDILEWARE_ROUTE_LOCAL_GROUPS = $output[0];
+                    $this->MIDDILEWARE_ROUTE_REGION = $output[1];
+                    $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES = $output[2];
+                }
+                break;
+            case "rmv-global-bypass":
+                $load = new middleware_handler();
+                $output = $load->remove_global_bypass($this->MIDDILEWARE_ROUTE_LOCAL_GROUPS, $this->MIDDILEWARE_ROUTE_REGION, $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES);
+                if($output) {
+                    $this->MIDDILEWARE_ROUTE_LOCAL_GROUPS = $output[0];
+                    $this->MIDDILEWARE_ROUTE_REGION = $output[1];
+                    $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES = $output[2];
+                }
                 break;
             case "add-route-to-group":
                 $load = new middleware_handler();
-                $load->add_route_to_group($this->MIDDILEWARE_ROUTE_LOCAL_GROUPS, $this->MIDDILEWARE_ROUTE_REGION, $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES, $this->ROUTES);
+                $output = $load->add_route_to_group($this->MIDDILEWARE_ROUTE_LOCAL_GROUPS, $this->MIDDILEWARE_ROUTE_REGION, $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES, $this->ROUTES);
+                if($output) {
+                    $this->MIDDILEWARE_ROUTE_LOCAL_GROUPS = $output[0];
+                    $this->MIDDILEWARE_ROUTE_REGION = $output[1];
+                    $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES = $output[2];
+                }
+                break;
+            case "rmv-route-from-group":
+                $load = new middleware_handler();
+                $output = $load->remove_route_from_group($this->MIDDILEWARE_ROUTE_LOCAL_GROUPS, $this->MIDDILEWARE_ROUTE_REGION, $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES);
+                if($output) {
+                    $this->MIDDILEWARE_ROUTE_LOCAL_GROUPS = $output[0];
+                    $this->MIDDILEWARE_ROUTE_REGION = $output[1];
+                    $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES = $output[2];
+                }
                 break;
             case "add-middleware-to-group":
                 $load = new middleware_handler();
-                $load->add_middleware_to_group($this->LOCAL_GROUP_MIDDLEWARE, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE);
+                $output = $load->add_middleware_to_group($this->LOCAL_GROUP_MIDDLEWARE, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE);
+                if($output) {
+                    $this->LOCAL_GROUP_MIDDLEWARE = $output[0];
+                    $this->REGIONAL_MIDDLEWARE = $output[1];
+                    $this->GLOBAL_MIDDLEWARE = $output[2];
+                }
+                break;
+            case "rmv-middleware-from-group":
+                $load = new middleware_handler();
+                $output = $load->remove_middleware_from_group($this->LOCAL_GROUP_MIDDLEWARE, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE);
+                if($output) {
+                    $this->LOCAL_GROUP_MIDDLEWARE = $output[0];
+                    $this->REGIONAL_MIDDLEWARE = $output[1];
+                    $this->GLOBAL_MIDDLEWARE = $output[2];
+                }
                 break;
             case "add-route-to-region":
                 $load = new middleware_handler();
-                $load->add_route_to_region($this->MIDDILEWARE_ROUTE_LOCAL_GROUPS, $this->MIDDILEWARE_ROUTE_REGION, $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES, $this->ROUTES);
+                $output = $load->add_route_to_region($this->MIDDILEWARE_ROUTE_LOCAL_GROUPS, $this->MIDDILEWARE_ROUTE_REGION, $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES, $this->ROUTES);
+                if($output) {
+                    $this->MIDDILEWARE_ROUTE_LOCAL_GROUPS = $output[0];
+                    $this->MIDDILEWARE_ROUTE_REGION = $output[1];
+                    $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES = $output[2];
+                }
+                break;
+            case "rmv-route-from-region":
+                $load = new middleware_handler();
+                $output = $load->remove_route_from_region($this->MIDDILEWARE_ROUTE_LOCAL_GROUPS, $this->MIDDILEWARE_ROUTE_REGION, $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES);
+                if($output) {
+                    $this->MIDDILEWARE_ROUTE_LOCAL_GROUPS = $output[0];
+                    $this->MIDDILEWARE_ROUTE_REGION = $output[1];
+                    $this->MIDDILEWARE_ROUTE_GLOBAL_BYPASS_ROUTES = $output[2];
+                }
                 break;
             case "add-middleware-to-region":
                 $load = new middleware_handler();
-                $load->add_middleware_to_region($this->LOCAL_GROUP_MIDDLEWARE, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE);
+                $output = $load->add_middleware_to_region($this->LOCAL_GROUP_MIDDLEWARE, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE);
+                if($output) {
+                    $this->LOCAL_GROUP_MIDDLEWARE = $output[0];
+                    $this->REGIONAL_MIDDLEWARE = $output[1];
+                    $this->GLOBAL_MIDDLEWARE = $output[2];
+                }
+                break;
+            case "rmv-middleware-from-region":
+                $load = new middleware_handler();
+                $output = $load->remove_middleware_from_region($this->LOCAL_GROUP_MIDDLEWARE, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE);
+                if($output) {
+                    $this->LOCAL_GROUP_MIDDLEWARE = $output[0];
+                    $this->REGIONAL_MIDDLEWARE = $output[1];
+                    $this->GLOBAL_MIDDLEWARE = $output[2];
+                }
                 break;
             case "add-group-to-region":
                 $load = new middleware_handler();
-                $load->add_group_to_region($this->LOCAL_GROUP_MIDDLEWARE, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE);
+                $output = $load->add_group_to_region($this->LOCAL_GROUP_MIDDLEWARE, $this->REGIONAL_MIDDLEWARE, $this->GLOBAL_MIDDLEWARE);
+                if($output) {
+                    $this->LOCAL_GROUP_MIDDLEWARE = $output[0];
+                    $this->REGIONAL_MIDDLEWARE = $output[1];
+                    $this->GLOBAL_MIDDLEWARE = $output[2];
+                }
                 break;
             case "run-logging":
                 $load = new log_handler();
