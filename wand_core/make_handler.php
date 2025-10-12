@@ -7,7 +7,8 @@ class make_handler extends wand_core {
             $run = true;
             print($this->LINE_BREAK);
             print("Generate a new agent for the server.\n");
-            print("Type 'cancel' to exit.\n");;
+            print("Type 'cancel' to exit.\n");
+            print($this->LINE_BREAK);
             while ($run) {
                 $agent_name = readline("Agent Name: ");
                 if (strtolower($agent_name) == "cancel") {
@@ -212,6 +213,7 @@ class ' . $handler_name . '_handler {
             system("cd Emberwhisk && php composer.phar install");
             print("Checking for openswoole...\n");
             print("Emberwhisk installed!\n");
+            $this->load_routes();
             print("Now just enter the Emberwhisk directory and set up the .env files for the corresponding environment from the example config file or use the 'gen-env' command in WAND to help build them.\n");
             print("Once that is done run the server by either navigating to the Emberwhisk directory and running 'php run.php [environment-var-here]' or using the 'start' command in WAND.\n");
             print("Note: the WAND 'start' command is recommended for development as it will automatically restart the server when changes are made.\n");;
@@ -257,43 +259,7 @@ class ' . $handler_name . '_handler {
         }
     }
 
-    private function pecl_check() {
-        $pecl_check = system("pecl -V");
-        if($pecl_check !== "") {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
 
-    private function php_dev_check() {
-        $dev_check = system("which phpize");
-        if($dev_check !== "") {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    private function openswoole_check() {
-        $osw_check = system("php -m | grep openswoole");
-        if($osw_check == "openswoole") {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    private function phpenmod_check() {
-        $mod_check = system("phpenmod");
-        if($mod_check == "") {
-            return false;
-        }
-        return true;
-    }
 
     public function gen_env() {
         $options = [
@@ -333,11 +299,23 @@ class ' . $handler_name . '_handler {
 
         system('stty sane');
         if(file_exists("Emberwhisk/src/.env.{$env_type}")) {
-            print("The .env.{$env_type} file already exists.\n");
+            $rewrite = $this->yes_no_display("The .env.{$env_type} file already exists.\nDo you want to rewrite the file?");
+            if($rewrite) {
+                $this->make_env_file($env_type);
+            }
+            else {
+                $this->clear_screen();
+            }
         }
         else if($env_type == "database config") {
             if(file_exists("Emberwhisk/src/.env.db_config")) {
-                print("The .env.db_config file already exists.\n");
+                $rewrite = $this->yes_no_display("The .env.db_config file already exists.\nDo you want to rewrite the file?");
+                if($rewrite) {
+                    $this->create_database_config();
+                }
+                else {
+                    $this->clear_screen();
+                }
             }
             else {
                 $this->create_database_config();
@@ -345,6 +323,43 @@ class ' . $handler_name . '_handler {
         }
         else {
             $this->make_env_file($env_type);
+        }
+    }
+
+    private function yes_no_display($text) {
+        $options = [
+            "No",
+            "Yes"
+        ];
+
+        $outOpts = [
+            false,
+            true
+        ];
+
+        $selected = 0;
+        system('stty -echo -icanon');
+        $this->menu($options, $selected, $text);
+
+        while (true) {
+            $key = fread(STDIN, 1);
+            if ($key === "\033") {
+                fread(STDIN, 1);
+                $key_sequence = fread(STDIN, 1);
+                switch ($key_sequence) {
+                    case "A":
+                        $selected = max(0, $selected - 1);
+                        break;
+                    case "B":
+                        $selected = min(count($options) - 1, $selected + 1);
+                        break;
+                }
+                $this->menu($options, $selected, $text);
+            } else if ($key == "\n") {
+                system('stty sane');
+
+                return $outOpts[$selected];
+            }
         }
     }
 
@@ -362,6 +377,8 @@ class ' . $handler_name . '_handler {
             "API_PROTOCOL",
             "API_AUTH_ADDRESS",
             "API_VERSION",
+            "TIME_BUFFER",
+            "RATE_LIMIT",
             "WORKER_COUNT",
             "SECRET",
             "MYSQL_RUN",
@@ -449,7 +466,13 @@ class ' . $handler_name . '_handler {
 
         if($db_config_gen) {
             if(file_exists("Emberwhisk/src/.env.db_config")) {
-                print("The .env.db_config file already exists.\n");
+                $rewrite = $this->yes_no_display("The .env.db_config file already exists.\nDo you want to rewrite the file?");
+                if($rewrite) {
+                    $this->create_database_config();
+                }
+                else {
+                    $this->clear_screen();
+                }
             }
             else {
                 $this->create_database_config();
@@ -562,6 +585,10 @@ class ' . $handler_name . '_handler {
                 return "emberwhisk";
             case "DB_PASSWORD":
                 return "notsecure";
+            case "TIME_BUFFER":
+                return "1000";
+            case "RATE_LIMIT":
+                return "60";
             default:
                 return "";
         }

@@ -47,7 +47,7 @@ class start_handler extends wand_core {
             $this->run_server($env_type);
         }
         else {
-            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31m" . $this->LINE_BREAK);
             if(!$sqlChk) {
                 print("\033[31mMissing Dependency:\n");
                 print("\033[31mThe SQLite3 php module is missing please install it before trying to run the server\n");
@@ -56,7 +56,7 @@ class start_handler extends wand_core {
                 print("\033[31mServer files missing:");
                 print("\033[31mPlease run the wand 'init' command first to install the server.\n");
             }
-            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31m" . $this->LINE_BREAK);
             print("\033[0m");
         }
     }
@@ -68,18 +68,18 @@ class start_handler extends wand_core {
         }
         else if($this->npm_check()) {
             system("sudo npm install -g nodemon");
-            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31m" . $this->LINE_BREAK);
             print("\033[31mMissing dependency:");
             print("\033[31mNodemon has been installed please rerun the wand 'start' command\n");
-            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31m" . $this->LINE_BREAK);
             print("\033[0m");
         }
         else {
-            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31m" . $this->LINE_BREAK);
             print("\033[31mMissing dependency:");
             print("\033[31mNodemon and NPM is not installed.\n");
             print("\033[31mPlease check how to install NPM on your distro and rerun the wand 'start' command.\n");
-            print("\033[31m$this->LINE_BREAK\n");
+            print("\033[31m" . $this->LINE_BREAK);
             print("\033[0m");
         }
     }
