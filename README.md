@@ -78,4 +78,4 @@ WAND & Emberwhisk are open-source projects, and we welcome contributions from th
 Your contributions are greatly appreciated and help make Emberwhisk better for everyone.
 
 ## License
-Emberwhisk is open-source software licensed under the GNU General Public License v3.0 (GPL-3.0). A copy of the license is included in the root directory of this project.
+Emberwhisk is open-source software licensed under the Apache-2.0 License. A copy of the license is included in the root directory of this project.
