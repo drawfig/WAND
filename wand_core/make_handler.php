@@ -86,8 +86,8 @@ class make_handler extends wand_core {
                 $file_content = '<?php
 namespace Agents;
 spl_autoload_register(function ($class_name) {
-    if(file_exists(__DIR__ . "/Utils/" . str_replace("Utils\\", "", $class_name) . ".php")) {
-        require_once (__DIR__ . "/Utils/" . str_replace("Utils\\", "", $class_name) . ".php");
+    if(file_exists(__DIR__ . "/Utils/" . str_replace("Utils\\\", "", $class_name) . ".php")) {
+        require_once (__DIR__ . "/Utils/" . str_replace("Utils\\\", "", $class_name) . ".php");
     }
 });
 
@@ -129,8 +129,8 @@ spl_autoload_register(function ($class_name) {
 });
 
 spl_autoload_register(function ($class_name) {
-    if(file_exists(__DIR__ . "/Agents/" . str_replace("Agents\\", "", $class_name) . ".php")) {
-        require_once (__DIR__ . "/Agents/" . str_replace("Agents\\", "", $class_name) . ".php");
+    if(file_exists(__DIR__ . "/Agents/" . str_replace("Agents\\\", "", $class_name) . ".php")) {
+        require_once (__DIR__ . "/Agents/" . str_replace("Agents\\\", "", $class_name) . ".php");
     }
 });
 
