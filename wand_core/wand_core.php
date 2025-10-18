@@ -13,6 +13,7 @@ class wand_core {
     public $GLOBAL_MIDDLEWARE;
     public $REGIONAL_MIDDLEWARE;
     public $LOCAL_GROUP_MIDDLEWARE;
+    public $HANDLER_CLASSES_AND_METHODS = [];
 
     public $logo = " _    _  ___   _   _______ 
 | |  | |/ _ \ | \ | |  _  \
@@ -550,6 +551,26 @@ class wand_core {
             print("\033[0m");
             return false;
         }
+    }
+
+    public function get_handler_methods($classname) {
+       $public_methods = $this->get_methods($classname);
+
+        foreach($public_methods as $method) {
+            if($method !== "__construct") {
+                $names[] = $method;
+            }
+        }
+
+        $this->HANDLER_CLASSES_AND_METHODS[$classname] = $names;
+
+        return $names;
+    }
+
+    private function get_methods($classname) {
+        $raw_out = system('php method_checker.php ' . $classname);
+        system('clear');
+        return json_decode($raw_out);
     }
 
     public function init() {
