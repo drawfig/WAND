@@ -47,9 +47,9 @@ class help_handler extends wand_core{
     ];
 
     private $VERSIONS = [
-        "version" => "V0.0.2 (Alpha2)",
-        "Codename" => "Astral-Amulet",
-        "Release Date" => "2025-09-24",
+        "version" => "V0.0.3 (Alpha3)",
+        "Codename" => "Blazing-Broom",
+        "Release Date" => "2025-10-18",
         "Developed By" => "The Emberwhisk Project",
         "Contact me on Discord" => "https://discord.com/invite/gtwuf2A4Hq",
         "Or Find me on Github" => "https://github.com/drawfig",

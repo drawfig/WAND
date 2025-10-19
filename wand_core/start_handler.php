@@ -68,11 +68,7 @@ class start_handler extends wand_core {
         }
         else if($this->npm_check()) {
             system("sudo npm install -g nodemon");
-            print("\033[31m" . $this->LINE_BREAK);
-            print("\033[31mMissing dependency:");
-            print("\033[31mNodemon has been installed please rerun the wand 'start' command\n");
-            print("\033[31m" . $this->LINE_BREAK);
-            print("\033[0m");
+            system('cd Emberwhisk/src && nodemon --watch . --ext php --signal SIGTERM --exec "php run.php ' . $env_type .'"');
         }
         else {
             print("\033[31m" . $this->LINE_BREAK);

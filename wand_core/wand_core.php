@@ -13,7 +13,6 @@ class wand_core {
     public $GLOBAL_MIDDLEWARE;
     public $REGIONAL_MIDDLEWARE;
     public $LOCAL_GROUP_MIDDLEWARE;
-    public $HANDLER_CLASSES_AND_METHODS = [];
 
     public $logo = " _    _  ___   _   _______ 
 | |  | |/ _ \ | \ | |  _  \
@@ -561,8 +560,6 @@ class wand_core {
                 $names[] = $method;
             }
         }
-
-        $this->HANDLER_CLASSES_AND_METHODS[$classname] = $names;
 
         return $names;
     }
