@@ -1172,7 +1172,9 @@ spl_autoload_register(function ($class_name) {
 });
 
 class ' . $middleware_name . ' {
-    public function run($data, $server, $db) {}
+    public function run($data, $server, $db, $routing) {
+        return true;
+    }
 }';
 
         $file_create = fopen("Emberwhisk/src/Middleware/{$middleware_name}.php", "w");
