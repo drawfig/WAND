@@ -1,6 +1,7 @@
 <?php
 use OpenSwoole\Coroutine;
 use OpenSwoole\Coroutine\Http\Client;
+use Utils\EnvBootstrap;
 
 
 class connect_test extends wand_core {
@@ -17,22 +18,29 @@ class connect_test extends wand_core {
                 "Port",
             ];
             $output = [];
-
-            foreach ($vars as $var) {
-                system("clear");
-                print($this->LINE_BREAK);
-                print("Enter the value of {$var}\n");
-                print("Enter the 'abort' to cancel\n");
-                print($this->LINE_BREAK);
-                $val = readline("> ");
-                if (strtolower($val) == "abort") {
-                    $output = [];
-                    break;
-                } else {
-                    $output[$var] = $val;
+            $env = $this->emberwhisk_and_file_chk();
+            if($env) {
+                include_once("Emberwhisk/src/Utils/EnvBootstrap.php");
+                $env_load = new EnvBootstrap($env);
+                $output["Address"] = $env_load->get_var("address");
+                $output["Port"] = $env_load->get_var("port");
+            }
+            else {
+                foreach ($vars as $var) {
+                    system("clear");
+                    print($this->LINE_BREAK);
+                    print("Enter the value of {$var}\n");
+                    print("Enter the 'abort' to cancel\n");
+                    print($this->LINE_BREAK);
+                    $val = readline("> ");
+                    if (strtolower($val) == "abort") {
+                        $output = [];
+                        break;
+                    } else {
+                        $output[$var] = $val;
+                    }
                 }
             }
-
             if (sizeof($output) > 0) {
                 $this->test($output['Address'], $output['Port']);
             } else {
@@ -152,5 +160,25 @@ class connect_test extends wand_core {
             print("\033[31m$this->LINE_BREAK\n");
             print("\033[0m");
         }
+    }
+
+    private function emberwhisk_and_file_chk() {
+        if(!$this->server_files_check()) {
+            return false;
+        }
+
+        $options = [
+            "dev",
+            "local",
+            "test",
+            "prod",
+        ];
+
+        $selected_env = $this->selection_menu($options, "Select what environment the server is running.");
+        if(file_exists("Emberwhisk/src/.env.{$selected_env}")) {
+            system('clear');
+            return $selected_env;
+        }
+        return false;
     }
 }

@@ -376,6 +376,9 @@ class ' . $handler_name . '_handler {
             "API_KEY",
             "API_PROTOCOL",
             "API_AUTH_ADDRESS",
+            "AUTH_CHECK_ADDRESS",
+            "AUTHORIZATION_ADDRESS",
+            "AUTH_ORIGIN",
             "API_VERSION",
             "TIME_BUFFER",
             "RATE_LIMIT",
@@ -389,6 +392,14 @@ class ' . $handler_name . '_handler {
             "SSL_VERIFY_PEER",
             "SSL_ALLOW_SELF_SIGNED",
             "MYSQL_RUN"
+        ];
+
+        $selector_lines = [
+            "AUTH_ORIGIN" => [
+                "sqlite",
+                "mysql",
+                "api"
+            ]
         ];
 
         $deploy_lines = [
@@ -409,11 +420,15 @@ class ' . $handler_name . '_handler {
             if(in_array($line, $true_false)) {
                 $value = $this->true_false_display($line);
             }
+            elseif (array_key_exists($line, $selector_lines)) {
+                $options = $selector_lines[$line];
+                $value = $this->selection_menu($options, "Select where the server should get the authorization data.");
+            }
             else {
                 $value = readline("Enter the value for {$line} (An empty value will result in the default value being used): ");
             }
 
-            if($value == "exit") {
+            if($value == "exit" || $value == "Abort") {
                 $file_content = "";
                 break;
             }
@@ -589,6 +604,12 @@ class ' . $handler_name . '_handler {
                 return "1000";
             case "RATE_LIMIT":
                 return "60";
+            case "AUTH_CHECK_ADDRESS":
+                return "authenticate";
+            case "AUTHORIZATION_ADDRESS":
+                return "authorization";
+            case "AUTH_ORIGIN":
+                return "sqlite";
             default:
                 return "";
         }

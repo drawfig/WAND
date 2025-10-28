@@ -1172,7 +1172,12 @@ spl_autoload_register(function ($class_name) {
 });
 
 class ' . $middleware_name . ' {
-    public function run($data, $server, $db, $routing) {
+private $RUN_TYPE;
+
+    public function __construct($run_type) {
+        $this->RUN_TYPE = $run_type;
+    }
+    public function run($data, $server, $db, $routing, $fd) {
         return true;
     }
 }';
