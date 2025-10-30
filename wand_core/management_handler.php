@@ -62,11 +62,7 @@ class management_handler extends wand_core {
 
     private function get_new_route_data($current_routes)
     {
-        $menu_questions = [
-            "What should the route be called? (example: 'bounce')",
-            "What class should the route be handled by? (example: 'Default_Handler')",
-            "What method should the route be handled by? (example: 'bounce')",
-        ];
+        $class_list = $this->get_files("handlers");
 
         $route_data = [];
 
@@ -75,20 +71,32 @@ class management_handler extends wand_core {
         print("To quit type the command 'abort'\n");
         print($this->LINE_BREAK);
 
-        foreach ($menu_questions as $question) {
-            while (true) {
-                $answer = readline($question . ": ");
-                if ($answer == "abort") {
-                    return false;
-                }
-                if (strlen($answer) > 2) {
-                    $route_data[] = $answer;
-                    break;
-                } else {
-                    print("Answer must be longer than 3 characters.\n");
-                }
+        while (true) {
+            $answer = readline("What should the route be called? (example: 'bounce'): ");
+            if ($answer == "abort") {
+                return false;
+            }
+            if (strlen($answer) > 2) {
+                $route_data[] = $answer;
+                break;
+            } else {
+                print("Answer must be longer than 3 characters.\n");
             }
         }
+
+        $selected_class = $this->selection_menu($class_list, "What class should the route be handled by? ");
+        if($selected_class == "Abort") {
+            return false;
+        }
+        $route_data[] = $selected_class;
+
+        $methods_list = $this->get_handler_methods($selected_class);
+        $selected_method = $this->selection_menu($methods_list, "What method should the route be handled by? ");
+        if($selected_method == "Abort") {
+            return false;
+        }
+        $route_data[] = $selected_method;
+
 
         if (!array_key_exists($route_data[0], $current_routes)) {
             $protected_status = $this->true_false_display("Do you want this route to be protected?");
@@ -103,7 +111,6 @@ class management_handler extends wand_core {
             else {
                 $route_data[] = false;
             }
-
             return $route_data;
         }
         else {
@@ -171,5 +178,30 @@ class Request_Routes {
             return $routes;
         }
         return false;
+    }
+
+    private function get_files($type) {
+        $exclude =[
+            ".",
+            "..",
+        ];
+
+        if($type == "handlers") {
+            $source = "Emberwhisk/src/Handlers";
+        }
+        else {
+            $source = "Emberwhisk/src/Agents";
+        }
+
+        $raw_files = scandir($source);
+
+        $output = [];
+        foreach($raw_files as $raw_file) {
+            if(!in_array($raw_file, $exclude)) {
+                $output[] = str_replace(".php", "", $raw_file);
+            }
+        }
+
+        return $output;
     }
 }

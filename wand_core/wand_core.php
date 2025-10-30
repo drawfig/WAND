@@ -552,6 +552,24 @@ class wand_core {
         }
     }
 
+    public function get_handler_methods($classname) {
+       $public_methods = $this->get_methods($classname);
+
+        foreach($public_methods as $method) {
+            if($method !== "__construct") {
+                $names[] = $method;
+            }
+        }
+
+        return $names;
+    }
+
+    private function get_methods($classname) {
+        $raw_out = system('php method_checker.php ' . $classname);
+        system('clear');
+        return json_decode($raw_out);
+    }
+
     public function init() {
         define('ANSI_RESET', "\033[0m");
         define('ANSI_INVERSE', "\033[7m");
