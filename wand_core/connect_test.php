@@ -85,14 +85,20 @@ class connect_test extends wand_core {
 
             if ($is_upgrade) {
                 $test_data = bin2hex(random_bytes(32));
-                $message = json_encode(["message_type" => "bounce", "test_data" => $test_data]);
+                $payload = [
+                    "user_id" => 0,
+                    "message_type" => "bounce",
+                    "data" => ["test_data" => $test_data],
+                    "auth" => $test_data
+                ];
+                $message = json_encode($payload);
                 $client->push($message);
 
                 $response = $client->recv(5);
 
                 if ($response) {
                     $response_data = json_decode($response->data, true);
-                    if ($response_data['message_type'] == "bounce" && $response_data['test_data'] == $test_data) {
+                    if ($response_data['message_type'] == "bounce" && $response_data['data']['test_data'] == $test_data) {
                         print("\033[32m" . $this->LINE_BREAK);
                         print("\033[32mConnection Successful\n");
                         print("\033[32m" . $this->LINE_BREAK);
